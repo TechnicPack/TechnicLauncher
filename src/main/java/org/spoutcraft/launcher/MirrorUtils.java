@@ -5,12 +5,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.bukkit.util.config.Configuration;
 import org.spoutcraft.launcher.async.DownloadListener;
@@ -29,7 +32,8 @@ public class MirrorUtils {
 			Iterator<Entry<String, Integer>> iterator = set.iterator();
 			while (iterator.hasNext()) {
 				Entry<String, Integer> e = iterator.next();
-				String mirror = "http://" + e.getKey() + "/" + mirrorURI;
+				String url = e.getKey();
+				String mirror = (!url.contains("github.com")) ? "http://" + e.getKey() + "/" + mirrorURI : "https://" + e.getKey() + "/" + mirrorURI;
 				if (isAddressReachable(mirror)) {
 					goodMirrors.add(e.getKey());
 				}
@@ -48,9 +52,10 @@ public class MirrorUtils {
 					int j = i;
 					if (j >= goodMirrors.size()) j-= goodMirrors.size();
 						int roll = rand.nextInt(100);
-						int chance = mirrors.get(goodMirrors.get(j));
+						String url = goodMirrors.get(j);
+						int chance = mirrors.get(url);
 						if (roll < chance) {
-							String mirror = "http://" + goodMirrors.get(j) + "/" + mirrorURI;
+							String mirror = (!url.contains("github.com")) ? "http://" + url + "/" + mirrorURI : "https://" + url + "/" + mirrorURI;
 							System.out.println("Using mirror: " + mirror);
 							if (listener != null) {
 								listener.stateChanged("Contacting Mirrors...", 100F);
@@ -81,11 +86,21 @@ public class MirrorUtils {
 	
 	public static boolean isAddressReachable(String url) {
 		try {
-			URL test = new URL(url);
-			HttpURLConnection.setFollowRedirects(false);
-			HttpURLConnection urlConnect = (HttpURLConnection)test.openConnection();
-			urlConnect.setRequestMethod("HEAD");
-			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK);
+			if (url.contains("https")) {
+				HttpsURLConnection urlConnect = (HttpsURLConnection)(new URL(url).openConnection());
+				urlConnect.setInstanceFollowRedirects(true);
+				
+				urlConnect.setRequestMethod("HEAD");
+				int responseCode = urlConnect.getResponseCode();
+				return (responseCode == HttpURLConnection.HTTP_OK);
+			} else {			
+				HttpURLConnection urlConnect = (HttpURLConnection)(new URL(url).openConnection());
+				urlConnect.setInstanceFollowRedirects(true);
+				
+				urlConnect.setRequestMethod("HEAD");
+				int responseCode = urlConnect.getResponseCode();
+				return (responseCode == HttpURLConnection.HTTP_OK);
+			}
 		} catch (Exception e) {
 			return false;
 		}
@@ -103,7 +118,7 @@ public class MirrorUtils {
 			try {
 				if (isAddressReachable("http://technic.freeworldsgaming.com/mirrors.yml")) {
 				URL url = new URL("http://technic.freeworldsgaming.com/mirrors.yml");
-					HttpURLConnection con = (HttpURLConnection)(url.openConnection());
+					URLConnection con = (url.openConnection());
 					System.setProperty("http.agent", "");
 					con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 					GameUpdater.copy(con.getInputStream(), new FileOutputStream(mirrorsYML));

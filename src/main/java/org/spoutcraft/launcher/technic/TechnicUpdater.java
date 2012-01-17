@@ -7,12 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
@@ -22,14 +20,11 @@ import java.util.zip.ZipFile;
 import org.bukkit.util.config.Configuration;
 import org.spoutcraft.launcher.DownloadUtils;
 import org.spoutcraft.launcher.GameUpdater;
-import org.spoutcraft.launcher.LibrariesYML;
 import org.spoutcraft.launcher.MD5Utils;
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.MirrorUtils;
 import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.SpoutcraftBuild;
 import org.spoutcraft.launcher.async.Download;
-import org.spoutcraft.launcher.exception.NoMirrorsAvailableException;
 
 public class TechnicUpdater extends GameUpdater {
 	private static volatile boolean updated = false;
@@ -63,7 +58,7 @@ public class TechnicUpdater extends GameUpdater {
 						}
 	
 						URL url = new URL(urlName);
-						HttpURLConnection con = (HttpURLConnection)(url.openConnection());
+						URLConnection con = (url.openConnection());
 						System.setProperty("http.agent", "");
 						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 						GameUpdater.copy(con.getInputStream(), new FileOutputStream(technicModsYML));
@@ -139,14 +134,25 @@ public class TechnicUpdater extends GameUpdater {
 			}
 			
 			if (!modFile.exists() || isDeleted) {
-				String mirrorURL = "mods/" + modName + "/" + fullFilename;
-				String fallbackURL = technicModsURL + modName + "/" + fullFilename;
-				String url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
-				download = DownloadUtils.downloadFile(url, modFile.getPath(), fullFilename, md5, this);
-				if (download.isSuccess())
-				{
-					updateMod(modFile, modName, version, modsConfig);
+				boolean isFileDownloaded = false;
+				
+				//Install from cache if md5 matches otherwise download and insert to cache
+				File modCache = new File(binCacheDir, fullFilename);
+				if (modCache.exists() && md5.equalsIgnoreCase(MD5Utils.getMD5(modCache))) {
+					copy(modCache, modFile);
+					isFileDownloaded = true;
+				} else {			
+				
+					String mirrorURL = "mods/" + modName + "/" + fullFilename;
+					String fallbackURL = technicModsURL + modName + "/" + fullFilename;
+					String url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
+					download = DownloadUtils.downloadFile(url, modFile.getPath(), fullFilename, md5, this);
+					isFileDownloaded = download.isSuccess();
 				}
+				
+				//If have the mod file then update
+				if (isFileDownloaded)
+					updateMod(modFile, modName, version, modsConfig);
 			}
 		}
 		
@@ -270,13 +276,8 @@ public class TechnicUpdater extends GameUpdater {
 			Map<String, Object> versionProperties = (Map<String, Object>) modVersions.get(version);
 			String md5 = (String)versionProperties.get("md5");
 			
-			File modFile = new File(modDirectory, fullFilename);
-			if (!modFile.exists()) {
-				return true;
-			}
-			
-			String computedMD5  = MD5Utils.getMD5(modFile);
-			if (!computedMD5.equals(md5)) {
+			File modCache = new File(binCacheDir, fullFilename);
+			if (!modCache.exists() || !md5.equalsIgnoreCase(MD5Utils.getMD5(modCache))) {
 				return true;
 			}
 		}

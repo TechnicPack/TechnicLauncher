@@ -170,6 +170,7 @@ public class ConfigurationNode {
         String o = getString(path);
 
         if (o == null) {
+        	if (def == null) return null;
             setProperty(path, def);
             return def;
         }

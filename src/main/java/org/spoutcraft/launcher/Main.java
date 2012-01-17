@@ -179,10 +179,10 @@ public class Main {
 
 		//System.out.println(i++ + " - " + new Date(System.currentTimeMillis()).toString());
 		if (relaunch) {
+			ls.close();
 			if (SettingsUtil.getMemorySelection() < 6) {
 				int mem = 1 << (9 + SettingsUtil.getMemorySelection());
 				recursion.createNewFile();
-				ls.close();
 				reboot("-Xmx" + mem + "m");
 			}
 		}

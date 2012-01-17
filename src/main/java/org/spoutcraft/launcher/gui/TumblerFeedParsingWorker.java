@@ -1,14 +1,14 @@
 package org.spoutcraft.launcher.gui;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 
-import javax.swing.DebugGraphics;
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
+
+import org.spoutcraft.launcher.MirrorUtils;
 
 public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 	JTextPane editorPane;
@@ -26,8 +26,8 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 		URL url = null;
 		try {
 			url = new URL("http://urcraft.com/technic/changelog/");
-			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-			if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
+			
+			if (MirrorUtils.isAddressReachable(url.toString())) {
 				editorPane.setVisible(false);
 				editorPane.setPage(url);
 				try {

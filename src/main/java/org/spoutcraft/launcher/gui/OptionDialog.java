@@ -357,19 +357,18 @@ public class OptionDialog extends JDialog implements ActionListener {
 			
 			
 			if (buildsCombo.isEnabled()) {
-				int build = -1;
+				String build = null;
 				try {
 					String item = ((String)buildsCombo.getSelectedItem());
 					if (item.contains("|")) {
 						item = item.split("\\|")[0];
 					}
-					item.trim();
-					build = Integer.parseInt(item);
+					build = item.trim();
 				}
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-				if (build > -1) {
+				if (build != null) {
 					SettingsUtil.setSelectedBuild(build);
 				}
 			}
@@ -397,8 +396,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		buildsCombo.setEnabled(customBuilds.isSelected());
 		
 		if (customBuilds.isSelected()) {
-			if (SettingsUtil.getSelectedBuild() > -1) {
-				int build = SettingsUtil.getSelectedBuild();
+			if (SettingsUtil.getSelectedBuild() != null) {
+				String build = SettingsUtil.getSelectedBuild();
 				for (int i = 0; i < buildsCombo.getItemCount(); i++) {
 					String item = (String) buildsCombo.getItemAt(i);
 					if (item.contains(String.valueOf(build))) {
@@ -433,7 +432,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			return false;
 		}
 		finally {
-			SpoutcraftYML.getSpoutcraftYML().setProperty("current", "");
+			SpoutcraftYML.getSpoutcraftYML().setProperty("current", null);
 			MinecraftYML.setInstalledVersion("");
 		}
 	}

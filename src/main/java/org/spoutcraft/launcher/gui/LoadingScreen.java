@@ -115,7 +115,8 @@ public class LoadingScreen extends JDialog {
 	
 	public void close()
 	{
-	    setVisible( false ); 
+	    setVisible( false );
+	    
 	    dispose();
 	}
 }

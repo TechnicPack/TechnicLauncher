@@ -377,7 +377,7 @@ public class GameUpdater implements DownloadListener {
 		
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 
-		if (build.getBuild() != build.getInstalledBuild()) 
+		if (!build.getBuild().equalsIgnoreCase(build.getInstalledBuild())) 
 			return true;
 		
 		File spoutcraft = new File(binDir, "technic.jar");

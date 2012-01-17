@@ -83,6 +83,24 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	Container offlinePane = new Container();
 
 	public LoginForm() {
+		SwingWorker<Object, Object> updateThread = new SwingWorker<Object, Object>() {
+			protected Object doInBackground() throws Exception {
+				MinecraftYML.updateMinecraftYMLCache();
+				SpoutcraftYML.updateSpoutcraftYMLCache();
+				LibrariesYML.updateLibrariesYMLCache();
+				ModsYML.updateModsYMLCache();
+				ModPacksYML.updateModPacksYMLCache();
+				TechnicUpdater.updateTechnicModsYML();
+				return null;
+			}
+			
+			protected void done() {
+				options.updateBuildsList();
+				options.updateModPackList();
+			}
+		};		
+		updateThread.execute();
+		
 		LoginForm.updateDialog = new UpdateDialog(this);
 		gameUpdater.setListener(this);
 		
@@ -351,7 +369,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						if (!pass.isEmpty()) {
 							i++;
 							if (i == 1) {
-								tumblerFeed.setUser(user);
+								if (tumblerFeed != null) tumblerFeed.setUser(user);
 								loginSkin1.setText(user);
 								loginSkin1.setVisible(true);
 								ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1Image);
@@ -711,25 +729,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	}
 	
 	public void windowOpened(WindowEvent e) {
-		
-		SwingWorker<Object, Object> updateThread = new SwingWorker<Object, Object>() {
-			protected Object doInBackground() throws Exception {
-				MinecraftYML.updateMinecraftYMLCache();
-				SpoutcraftYML.updateSpoutcraftYMLCache();
-				LibrariesYML.updateLibrariesYMLCache();
-				ModsYML.updateModsYMLCache();
-				ModPacksYML.updateModPacksYMLCache();
-				TechnicUpdater.updateTechnicModsYML();
-				return null;
-			}
-			
-			protected void done() {
-				options.updateBuildsList();
-				options.updateModPackList();
-			}
-		};
-		updateThread.execute();
-
 		tumblerFeed = new TumblerFeedParsingWorker(editorPane);
 		tumblerFeed.execute();
 

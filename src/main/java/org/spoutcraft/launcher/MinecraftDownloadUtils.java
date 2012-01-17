@@ -69,22 +69,22 @@ public class MinecraftDownloadUtils {
 	@SuppressWarnings("unchecked")
 	public static String[] getSpoutcraftBuilds() {
 		Configuration config = SpoutcraftYML.getSpoutcraftYML();
-		Map<Integer, Object> builds = (Map<Integer, Object>) config.getProperty("builds");
-		int latest = config.getInt("latest", -1);
-		int recommended = config.getInt("recommended", -1);
+		Map<String, Object> builds = (Map<String, Object>) config.getProperty("builds");
+		String latest = config.getString("latest", null);
+		String recommended = config.getString("recommended", null);
 		
 		if (builds != null) {
 			String[] results = new String[builds.size()];
 			int index = 0;
-			for (Integer i : builds.keySet()) {
+			for (String i : builds.keySet()) {
 				results[index] = i.toString();
 				Map<String, Object> map = (Map<String, Object>) builds.get(i);
 				String version = String.valueOf(map.get("minecraft"));
 				results[index] += "| " + version;
-				if (i.intValue() == latest) {
+				if (i == latest) {
 					results[index] += " | Latest";
 				}
-				if (i.intValue() == recommended) {
+				if (i == recommended) {
 					results[index] += " | Rec. Build";
 				}
 				index++;
