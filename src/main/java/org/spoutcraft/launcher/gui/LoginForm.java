@@ -127,7 +127,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	Container																	loginPane					= new Container();
 	Container																	offlinePane				= new Container();
 	// private final JLabel lblLogo;
-	private final JComboBox<String>						modpackList;
+	private final JComboBox						modpackList;
 
 	public LoginForm() {
 		loadLauncherData();
@@ -177,7 +177,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			}
 		}
 		String[] itemArray = new String[i];
-		modpackList = new JComboBox<String>(items.toArray(itemArray));
+		modpackList = new JComboBox(items.toArray(itemArray));
 		modpackList.setBounds(10, 10, 328, 100);
 		ComboBoxRenderer renderer = new ComboBoxRenderer();
 		renderer.setPreferredSize(new Dimension(200, 110));

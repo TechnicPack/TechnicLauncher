@@ -143,7 +143,7 @@ public class CheckBoxNodeTreeSample {
 
 		File workingDirectory = PlatformUtils.getWorkingDirectory();
 		Image im = Toolkit.getDefaultToolkit().getImage(new File(workingDirectory, "splash_logo.png").getAbsolutePath());
-		JList<Image> list = new JList<Image>(new Image[] { im, im });
+		JList list = new JList(new Image[] { im, im });
 
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		Image tek = Toolkit.getDefaultToolkit().getImage(new File(workingDirectory, "tekkit_unselected.png").getAbsolutePath());

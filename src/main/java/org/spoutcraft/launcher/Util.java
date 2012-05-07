@@ -42,23 +42,23 @@ public class Util {
 		combobox.addItem(new ComboItem(label, value));
 	}
 
-	public static void setSelectedComboByLabel(JComboBox<ComboItem> combobox, String label) {
+	public static void setSelectedComboByLabel(JComboBox combobox, String label) {
 		for (int i = 0; i < combobox.getItemCount(); i++) {
-			if ((combobox.getItemAt(i)).getLabel().equalsIgnoreCase(label)) {
+			if (((ComboItem)combobox.getItemAt(i)).getLabel().equalsIgnoreCase(label)) {
 				combobox.setSelectedIndex(i);
 			}
 		}
 	}
 
-	public static void setSelectedComboByValue(JComboBox<ComboItem> combobox, String value) {
+	public static void setSelectedComboByValue(JComboBox combobox, String value) {
 		for (int i = 0; i < combobox.getItemCount(); i++) {
-			if ((combobox.getItemAt(i)).getValue().equalsIgnoreCase(value)) {
+			if (((ComboItem)combobox.getItemAt(i)).getValue().equalsIgnoreCase(value)) {
 				combobox.setSelectedIndex(i);
 			}
 		}
 	}
 
-	public static String getSelectedValue(JComboBox<ComboItem> combobox) {
+	public static String getSelectedValue(JComboBox combobox) {
 		return ((ComboItem) combobox.getSelectedItem()).getValue();
 	}
 
