@@ -42,14 +42,14 @@
 	<!-- Continuous integration -->
 	<ciManagement>
 		<system>jenkins</system>
-		<url>http://ci.getspout.org</url>
+		<url>http://build.spout.org/</url>
 	</ciManagement>
 
 	<!-- Repository locations -->
 	<repositories>
 		<repository>
 			<id>spout-repo</id>
-			<url>http://repo.getspout.org/content/repositories/snapshots</url>
+			<url>http://repo.spout.org</url>
 		</repository>
 	</repositories>
 
