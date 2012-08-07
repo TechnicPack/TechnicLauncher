@@ -19,11 +19,12 @@ package org.spoutcraft.launcher.gui;
 
 import java.applet.Applet;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.spoutcraft.launcher.Launcher;
@@ -36,7 +37,7 @@ import org.spoutcraft.launcher.exception.MinecraftVerifyException;
 import org.spoutcraft.launcher.modpacks.ModPackListYML;
 import org.spoutcraft.launcher.modpacks.ModPackYML;
 
-public class LauncherFrame extends Frame implements WindowListener {
+public class LauncherFrame extends JFrame implements WindowListener {
 	private static final long				serialVersionUID	= 4524937541564722358L;
 	private MinecraftAppletEnglober	minecraft;
 	private LoginForm								loginForm					= null;
@@ -47,6 +48,17 @@ public class LauncherFrame extends Frame implements WindowListener {
 
 	public LauncherFrame() {
 		super(ModPackListYML.currentModPackLabel);
+	    try
+	    {
+	    	Class<?> fullScreenUtilityClass = Class.forName("com.apple.eawt.FullScreenUtilities");
+	    	java.lang.reflect.Method setWindowCanFullScreenMethod = fullScreenUtilityClass.getDeclaredMethod("setWindowCanFullScreen", new Class[] { Window.class, Boolean.TYPE });
+	    	setWindowCanFullScreenMethod.invoke(null, new Object[] { this, Boolean.valueOf(true) });
+	    } catch (ClassNotFoundException e) {
+	    	// No big loss, probably on a non-Mac platform.
+	    	System.out.println("Couldn't fullscreenify");
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
 		super.setVisible(true);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation((dim.width - 870) / 2, (dim.height - 518) / 2);
@@ -110,7 +122,7 @@ public class LauncherFrame extends Frame implements WindowListener {
 
 		this.add(minecraft);
 		validate();
-
+		
 		minecraft.init();
 		minecraft.setSize(getWidth(), getHeight());
 
