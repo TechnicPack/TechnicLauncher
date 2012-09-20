@@ -115,7 +115,7 @@ public class MD5Utils {
 	}
 
 	public static boolean checksumPath(File file, String md5Path) {
-		return true;
+		return false;
 	}
 
 	public static String getMD5FromList(String md5Path) {
