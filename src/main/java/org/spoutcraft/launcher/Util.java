@@ -86,12 +86,4 @@ public class Util {
 		}
 		return list;
 	}
-
-	public static String getBuild() {
-		List<String> lines = readTextFromJar("/META-INF/maven/org.spoutcraft/technic-launcher/pom.properties");
-		for (String line : lines) {
-			if (line.contains("version")) { return line.replace("version=", ""); }
-		}
-		return Main.build;
-	}
 }

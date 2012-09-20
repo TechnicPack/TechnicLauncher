@@ -37,13 +37,12 @@ import com.beust.jcommander.JCommander;
 
 public class Main {
 
-	static String[]					args_temp;
-	public static String		build			= "1.0.1.1";
-	public static String	currentPack;
-	static File							recursion;
+	static String[] args_temp;
+	public static String build = "1.0.1.1";
+	public static String currentPack;
+	static File	recursion;
 	public static LoginForm	loginForm;
-	public static boolean		isOffline	= false;
-
+	public static boolean isOffline	= false;
 	public Main() throws Exception {
 		main(new String[0]);
 	}
@@ -112,7 +111,6 @@ public class Main {
 		LoadingScreen ls = new LoadingScreen();
 		if (!isDebug()) {
 			ls.setVisible(true);
-			build = Util.getBuild();
 		}
 		Options options = new Options();
 		try {
