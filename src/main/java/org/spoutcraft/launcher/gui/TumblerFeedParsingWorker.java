@@ -36,14 +36,13 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object> implem
 	protected Object doInBackground() {
 		URL url = null;
 		try {
-			url = new URL("http://mirror.technicpack.net/Technic/");
+			url = new URL("http://alexhulbert.com/AtexFeed.htm");
 
 			if (MirrorUtils.isAddressReachable(url.toString())) {
 				editorPane.setVisible(false);
 				editorPane.setContentType("text/html");
 				// editorPane.setEditable(false);
 				ToolTipManager.sharedInstance().registerComponent(editorPane);
-
 				editorPane.addHyperlinkListener(new HyperlinkListener() {
 					@Override
 					public void hyperlinkUpdate(HyperlinkEvent e) {
