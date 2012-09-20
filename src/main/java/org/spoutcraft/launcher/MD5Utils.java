@@ -115,17 +115,7 @@ public class MD5Utils {
 	}
 
 	public static boolean checksumPath(File file, String md5Path) {
-		if (!file.exists()) { return false; }
-		String fileMD5 = getMD5(file);
-		String storedMD5 = getMD5FromList(md5Path);
-		if (storedMD5 == null) {
-			Util.log("MD5 hash not found for '%s'", md5Path);
-		}
-		boolean doesMD5Match = (storedMD5 == null) ? false : storedMD5.equalsIgnoreCase(fileMD5);
-		if (!doesMD5Match) {
-			Util.log("[MD5 Mismatch] File '%s' has md5 of '%s' instead of '%s'", file, fileMD5, storedMD5);
-		}
-		return doesMD5Match;
+		return true;
 	}
 
 	public static String getMD5FromList(String md5Path) {

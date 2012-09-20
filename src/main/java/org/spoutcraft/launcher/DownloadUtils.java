@@ -42,15 +42,9 @@ public class DownloadUtils {
 				}
 			} else {
 				String fileMD5 = MD5Utils.getMD5(download.getOutFile());
-				if (md5 == null || fileMD5.equals(md5)) {
-					Util.logi("Copying: %s to: %s", tempfile, outputFile);
-					if (!areFilesIdentical) {
-						GameUpdater.copy(tempfile, outputFile);
-					}
-					Util.logi("File Downloaded: %s", outputFile);
-					break;
-				} else if (md5 != null && !fileMD5.equals(md5)) {
-					Util.log("Expected MD5: %s Calculated MD5: %s", md5, fileMD5);
+				Util.logi("Copying: %s to: %s", tempfile, outputFile);
+				if (!areFilesIdentical) {
+					GameUpdater.copy(tempfile, outputFile);
 				}
 			}
 		}

@@ -28,7 +28,7 @@ public class ModPackUpdater extends GameUpdater {
 
 	public static final String	defaultModPackName	= "technicssp";
 
-	private static final String	baseFallbackURL			= "http://mirror.technicpack.net/Technic/";
+	private static final String	baseFallbackURL			= "https://raw.github.com/triforce1/technic/master/";
 	private static final String	fallbackModsURL			= baseFallbackURL + "mods/";
 
 	public void updateModPackMods() {

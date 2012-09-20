@@ -39,7 +39,7 @@ public class Main {
 
 	static String[]					args_temp;
 	public static String		build			= "1.0.1.1";
-	public static String		currentPack;
+	public static String	currentPack;
 	static File							recursion;
 	public static LoginForm	loginForm;
 	public static boolean		isOffline	= false;
