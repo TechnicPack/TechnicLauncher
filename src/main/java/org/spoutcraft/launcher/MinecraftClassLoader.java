@@ -30,8 +30,9 @@ import java.util.jar.JarFile;
 
 public class MinecraftClassLoader extends URLClassLoader {
 	private final HashMap<String, Class<?>>	loadedClasses	= new HashMap<String, Class<?>>(1000);
-	private File														spoutcraft		= null;
-	private final File[]										libraries;
+	private File							spoutcraft		= null;
+	private File                            custom          = null;
+	private final File[]					libraries;
 
 	public MinecraftClassLoader(URL[] urls, ClassLoader parent, File spoutcraft, File[] libraries) {
 		super(urls, parent);
@@ -46,6 +47,21 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 	}
 
+	public MinecraftClassLoader(URL[] urls, ClassLoader parent, File spoutcraft, File custom, File[] libraries)
+	{
+		this(urls, parent, spoutcraft, libraries);
+		this.custom = custom;
+		try
+		{
+			this.addURL(custom.toURI().toURL());
+		}
+		catch(MalformedURLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+
 	// NOTE: VerifyException is due to multiple classes of the same type in
 	// jars, need to override all classloader methods to fix...
 
@@ -56,6 +72,9 @@ public class MinecraftClassLoader extends URLClassLoader {
 
 		result = findClassInjar(name, spoutcraft);
 		if (result != null) { return result; }
+
+		result = findClassInjar(name, custom);
+		if (result != null) {return result; }
 
 		for (File file : libraries) {
 			result = findClassInjar(name, file);
