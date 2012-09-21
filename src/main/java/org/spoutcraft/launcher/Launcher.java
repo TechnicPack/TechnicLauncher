@@ -66,6 +66,20 @@ public class Launcher {
 				e.printStackTrace();
 			}
 		}
+		if(!spoutcraftJar.exists())
+		{
+			try
+			{
+				FileOutputStream stream = new FileOutputStream(spoutcraftJar);
+				JarOutputStream out = new JarOutputStream(stream);
+				out.close();
+				stream.close();
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		int librarycount = 4;
 		if (libraries != null) {
