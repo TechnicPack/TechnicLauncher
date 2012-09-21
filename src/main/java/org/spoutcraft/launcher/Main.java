@@ -56,7 +56,24 @@ public class Main {
 				Util.log("32-bit Vm being used. Max memory is 1.5Gb");
 				memoryAllocation = 1536;
 			}
-			String pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+		    //String pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            private String getJarFolder() {
+                // get name and path
+                String name = getClass().getName().replace('.', '/');
+                name = getClass().getResource("/" + name + ".class").toString();
+                // remove junk
+                name = name.substring(0, name.indexOf(".jar"));
+                name = name.substring(name.lastIndexOf(':')-1, name.lastIndexOf('/')+1).replace('%', ' ');
+                // remove escape characters
+                String s = "";
+                for (int k=0; k<name.length(); k++) {
+                    s += name.charAt(k);
+                    if (name.charAt(k) == ' ') k += 2;
+                }
+                // replace '/' with system separator char
+                return s.replace('/', File.separatorChar);
+            }
+
 			ArrayList<String> params = new ArrayList<String>();
 			params.add("java"); // Linux/Mac/whatever
 			// if (memoryAllocation > 512) params.add("-Xincgc");
@@ -68,11 +85,39 @@ public class Main {
 
 			if (PlatformUtils.getPlatform() != PlatformUtils.OS.windows) {
 				params.add("-classpath");
-				params.add(pathToJar);
+				//params.add(pathToJar);
+                params.add(getJarFolder());
+                
+                Util.log("Rebooting from %s", getJarfolder);
+                try
+                {
+                    Util.log("Old path worked; was %s", Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().substring(1));
+                }
+                catch(NullPointerException e)
+                {
+                    Util.log("Couldn't find other path, Stack trace below.");
+                    e.printStackTrace();
+                    Util.log("Stack trace end.");
+                }
+                
 				params.add("org.spoutcraft.launcher.Main");
 			} else {
 				params.add("-jar");
-				params.add(String.format("\"%s\"", pathToJar.substring(1)));
+				//params.add(String.format("\"%s\"", pathToJar.substring(1)));
+                params.add("\"%s\"", getJarFolder());
+                Util.log("Rebooting from %s", getJarfolder);
+                
+                try
+                {
+                    Util.log("Old path worked; was %s", Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath().substring(1));
+                }
+                catch(NullPointerException e)
+                {
+                    Util.log("Couldn't find other path, Stack trace below.");
+                    e.printStackTrace();
+                    Util.log("Stack trace end.");
+                }
+                
 			}
 
 			params.addAll(Arrays.asList(args_temp));
