@@ -217,8 +217,7 @@ public class ModPackUpdater extends GameUpdater {
 			String fullFilename = modName + "-" + version + "." + installType;
 
 			String md5Name = "mods\\" + modName + "\\" + fullFilename;
-			if (!MD5Utils.checksumCachePath(fullFilename, md5Name)) { return true; }
-			int a = 1;
+			//if (!MD5Utils.checksumCachePath(fullFilename, md5Name)) { return true; }
 			String installedModVersion = InstalledModsYML.getInstalledModVersion(modName);
 			if (installedModVersion == null || !installedModVersion.equals(version)) { return true; }
 		}
