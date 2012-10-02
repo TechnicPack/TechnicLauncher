@@ -41,11 +41,11 @@ public class DownloadUtils {
 					listener.stateChanged("Download Failed, retries remaining: " + tries, 0F);
 				}
 			} else {
-				String fileMD5 = MD5Utils.getMD5(download.getOutFile());
 				Util.logi("Copying: %s to: %s", tempfile, outputFile);
 				if (!areFilesIdentical) {
 					GameUpdater.copy(tempfile, outputFile);
 				}
+				break;
 			}
 		}
 
