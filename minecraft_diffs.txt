@@ -1,0 +1,20 @@
+# Original_version  Patched_version
+# Versions must always go backwards, not forwards, to avoid loops in the tree
+1.2.5 1.2.3hsm
+1.0.0 b1.7.2
+1.0.0 b1.7.3
+1.0.0 b1.8.1
+1.0.0 b1.8
+1.1 1.0.0
+1.1 b1.8.1
+1.2 1.1
+1.2.3 1.1
+1.2.4 1.1
+1.2.4 1.2.3
+1.2.5 1.1
+1.2.5 1.2.3
+1.3.1 1.2.3
+1.3.1 1.2.5
+1.3.2 1.2.3
+1.3.2 1.2.5
+1.3.2 1.3.1
