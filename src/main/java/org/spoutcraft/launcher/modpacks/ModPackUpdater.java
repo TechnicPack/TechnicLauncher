@@ -26,7 +26,7 @@ import org.spoutcraft.launcher.async.Download;
 
 public class ModPackUpdater extends GameUpdater {
 
-	public static final String	defaultModPackName	= "atex";
+	public static final String	defaultModPackName	= "technicssp";
 
 	private static final String	baseFallbackURL			= "https://raw.github.com/triforce1/technic/master/";
 	private static final String	fallbackModsURL			= baseFallbackURL + "mods/";
@@ -196,7 +196,7 @@ public class ModPackUpdater extends GameUpdater {
 		}
 	}
 
-	public int isModpackUpdateAvailable() throws IOException {
+	public boolean isModpackUpdateAvailable() throws IOException {
 
 		Map<String, Object> modLibrary = (Map<String, Object>) ModLibraryYML.getModLibraryYML().getProperty("mods");
 		Map<String, Object> currentModList = ModpackBuild.getSpoutcraftBuild().getMods();
@@ -211,9 +211,7 @@ public class ModPackUpdater extends GameUpdater {
 
 			String version = modEntry2.getValue().toString();
 
-			if (!modVersions.containsKey(version)) { 
-				throw new IOException("Mod version is missing from the mod library");
-			}
+			if (!modVersions.containsKey(version)) { throw new IOException("Mod version is missing from the mod library"); }
 
 			String installType = modProperties.get("installtype").toString();
 			String fullFilename = modName + "-" + version + "." + installType;
@@ -221,16 +219,9 @@ public class ModPackUpdater extends GameUpdater {
 			String md5Name = "mods\\" + modName + "\\" + fullFilename;
 			//if (!MD5Utils.checksumCachePath(fullFilename, md5Name)) { return true; }
 			String installedModVersion = InstalledModsYML.getInstalledModVersion(modName);
-			
-			if (installedModVersion == null || !installedModVersion.equals(version)) {
-				if (modName.contains("flux")) {
-					return 2;
-				}
-				else {
-					return 1;
-				}
-			}
+			if (installedModVersion == null || !installedModVersion.equals(version)) { return true; }
 		}
-		return 0;
+
+		return false;
 	}
 }
