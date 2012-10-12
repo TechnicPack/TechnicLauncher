@@ -116,6 +116,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public boolean														mcUpdate					= false;
 	public boolean														spoutUpdate				= false;
 	public boolean														modpackUpdate			= false;
+	public boolean														dlog					= false;
 	public static UpdateDialog								updateDialog;
 	private static String											pass							= null;
 	public static String[]										values						= null;
@@ -781,7 +782,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 						publish(String.format("Checking for %s update...\n", ModPackListYML.currentModPackLabel));
 						try {
-							modpackUpdate = gameUpdater.isModpackUpdateAvailable();
+							modpackUpdate = (gameUpdater.isModpackUpdateAvailable() > 0);
+							dlog = (gameUpdater.isModpackUpdateAvailable() == 2);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -793,7 +795,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						if (modpackUpdate) {
 							updateDialog.setToUpdate(ModPackListYML.currentModPackLabel);
 						} else if (spoutUpdate) {
-							updateDialog.setToUpdate("Spoutcraft");
+							updateDialog.setToUpdate("your modpack");
 						} else if (mcUpdate) {
 							updateDialog.setToUpdate("Minecraft");
 						}
@@ -801,7 +803,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 							if (!GameUpdater.binDir.exists() || mcUpdate) {
 								updateThread();
 							} else {
-								LoginForm.updateDialog.setVisible(true);
+								if (!dlog) {
+									LoginForm.updateDialog.setVisible(true);
+								}
 							}
 						} else {
 							runGame();
