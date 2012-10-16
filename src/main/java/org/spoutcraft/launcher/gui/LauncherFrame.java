@@ -48,17 +48,18 @@ public class LauncherFrame extends JFrame implements WindowListener {
 
 	public LauncherFrame() {
 		super(ModPackListYML.currentModPackLabel);
-	    try
-	    {
-	    	Class<?> fullScreenUtilityClass = Class.forName("com.apple.eawt.FullScreenUtilities");
-	    	java.lang.reflect.Method setWindowCanFullScreenMethod = fullScreenUtilityClass.getDeclaredMethod("setWindowCanFullScreen", new Class[] { Window.class, Boolean.TYPE });
-	    	setWindowCanFullScreenMethod.invoke(null, new Object[] { this, Boolean.valueOf(true) });
-	    } catch (ClassNotFoundException e) {
-	    	// No big loss, probably on a non-Mac platform.
-	    	System.out.println("Couldn't fullscreenify");
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
+		if (System.getProperty("os.name").contains("OS X")) {
+			try
+			{
+				Class<?> fullScreenUtilityClass = Class.forName("com.apple.eawt.FullScreenUtilities");
+				java.lang.reflect.Method setWindowCanFullScreenMethod = fullScreenUtilityClass.getDeclaredMethod("setWindowCanFullScreen", new Class[] { Window.class, Boolean.TYPE });
+				setWindowCanFullScreenMethod.invoke(null, new Object[] { this, Boolean.valueOf(true) });
+			} catch (Exception e) {
+				// This is not a fatal exception, so just log it for brevity.
+				e.printStackTrace();
+			}
+		}
+
 		super.setVisible(true);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation((dim.width - 870) / 2, (dim.height - 518) / 2);
