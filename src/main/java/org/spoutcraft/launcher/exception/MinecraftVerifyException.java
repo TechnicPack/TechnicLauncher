@@ -2,30 +2,17 @@ package org.spoutcraft.launcher.exception;
 
 public class MinecraftVerifyException extends Exception {
 	private static final long	serialVersionUID	= 1L;
-	private final Throwable		cause;
-	private final String			message;
 
 	public MinecraftVerifyException(String message) {
-		this(null, message);
+		super(message);
 	}
 
 	public MinecraftVerifyException(Throwable throwable, String message) {
-		this.cause = throwable;
-		this.message = message;
+		super(message, throwable);
 	}
 
 	public MinecraftVerifyException(Throwable throwable) {
-		this.cause = throwable;
-		this.message = null;
+		super(throwable);
 	}
 
-	@Override
-	public Throwable getCause() {
-		return this.cause;
-	}
-
-	@Override
-	public String getMessage() {
-		return this.message;
-	}
 }

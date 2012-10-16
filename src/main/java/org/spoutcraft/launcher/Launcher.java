@@ -105,7 +105,7 @@ public class Launcher {
 			throw new MinecraftVerifyException(ex);
 		} catch (Throwable t) {
 			throw new UnknownMinecraftException(t);
-		}
+		} 
 	}
 
 	/*

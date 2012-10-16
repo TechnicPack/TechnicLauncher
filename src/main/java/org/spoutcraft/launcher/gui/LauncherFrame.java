@@ -72,14 +72,20 @@ public class LauncherFrame extends Frame implements WindowListener {
 		} catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {
+			System.err.println("Exception thrown while initializing MineCraft.");
+			verify.printStackTrace();
 			OptionDialog.clearCache();
 			JOptionPane.showMessageDialog(getParent(), "The minecraft installation was corrupted. \nThe minecraft installation has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
 			this.setVisible(false);
 			this.dispose();
 			return ERROR_IN_LAUNCH;
+		} catch (Throwable t) {
+			System.err.println("Exception thrown while initializing MineCraft.");
+			t.printStackTrace();
+			applet = null;
 		}
 		if (applet == null) {
-			String message = "Failed to launch Launcher!";
+			String message = "Failed to start launcher, errors reported in the log.";
 			this.setVisible(false);
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.dispose();
@@ -111,10 +117,18 @@ public class LauncherFrame extends Frame implements WindowListener {
 		this.add(minecraft);
 		validate();
 
-		minecraft.init();
-		minecraft.setSize(getWidth(), getHeight());
-
-		minecraft.start();
+		try {
+			minecraft.init();
+			minecraft.setSize(getWidth(), getHeight());
+			minecraft.start();
+		} catch (Throwable t) {
+			System.err.println("Exception thrown while initializing MineCraft.");
+			t.printStackTrace();
+			JOptionPane.showMessageDialog(getParent(), "Minecraft failed to start, errors reported in the log.");
+			this.setVisible(false);
+			this.dispose();
+			return ERROR_IN_LAUNCH;
+		}
 
 		this.setVisible(true);
 		return SUCCESSFUL_LAUNCH;
