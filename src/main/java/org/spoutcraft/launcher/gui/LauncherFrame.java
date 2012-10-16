@@ -54,7 +54,7 @@ public class LauncherFrame extends Frame implements WindowListener {
 		this.setResizable(true);
 		this.addWindowListener(this);
 
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModPackYML.getModPackFavIcon()));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ModPackYML.getModPackIcon()));
 	}
 
 	public void setLoginForm(LoginForm form) {
