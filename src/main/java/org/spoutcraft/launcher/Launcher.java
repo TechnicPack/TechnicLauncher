@@ -17,7 +17,7 @@
 package org.spoutcraft.launcher;
 
 import java.applet.Applet;
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
@@ -25,6 +25,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exception.MinecraftVerifyException;
@@ -45,9 +47,39 @@ public class Launcher {
 		File jinputJar = new File(mcBinFolder, "jinput.jar");
 		File lwglJar = new File(mcBinFolder, "lwjgl.jar");
 		File lwjgl_utilJar = new File(mcBinFolder, "lwjgl_util.jar");
+		File customJar = new File(mcBinFolder, "custom.jar");
 
 		ModpackBuild build = ModpackBuild.getSpoutcraftBuild();
 		Map<String, Object> libraries = build.getLibraries();
+
+		if(!customJar.exists())
+		{
+			try
+			{
+				FileOutputStream stream = new FileOutputStream(customJar);
+				JarOutputStream out = new JarOutputStream(stream);
+				out.close();
+				stream.close();
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		if(!spoutcraftJar.exists())
+		{
+			try
+			{
+				FileOutputStream stream = new FileOutputStream(spoutcraftJar);
+				JarOutputStream out = new JarOutputStream(stream);
+				out.close();
+				stream.close();
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		int librarycount = 4;
 		if (libraries != null) {
@@ -66,7 +98,7 @@ public class Launcher {
 			}
 		}
 
-		URL urls[] = new URL[5];
+		URL urls[] = new URL[6];
 
 		try {
 			urls[0] = minecraftJar.toURI().toURL();
@@ -78,8 +110,11 @@ public class Launcher {
 			urls[3] = lwjgl_utilJar.toURI().toURL();
 			files[index + 3] = lwjgl_utilJar;
 			urls[4] = spoutcraftJar.toURI().toURL();
+			urls[5] = customJar.toURI().toURL();
 
-			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar, files);
+
+			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar, customJar, files);
+
 
 			setMinecraftDirectory(classLoader, GameUpdater.modpackDir);
 			int a = 1;
