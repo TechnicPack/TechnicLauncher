@@ -66,6 +66,8 @@ public class GameUpdater implements DownloadListener {
 	public static final File		workDir							= new File(WORKING_DIRECTORY, LAUNCHER_DIRECTORY);
 	public static File					savesDir						= new File(WORKING_DIRECTORY, "saves");
 	public static File					modsDir							= new File(WORKING_DIRECTORY, "mods");
+	public static File					libsDir						= new File(WORKING_DIRECTORY, "lib");
+	public static File					coremodsDir						= new File(WORKING_DIRECTORY, "coremods");
 	public static File					modconfigsDir				= new File(WORKING_DIRECTORY, "config");
 	public static File					resourceDir					= new File(WORKING_DIRECTORY, "resources");
 
@@ -87,6 +89,8 @@ public class GameUpdater implements DownloadListener {
 		backupDir = new File(modpackDir, "backups");
 		savesDir = new File(modpackDir, "saves");
 		modsDir = new File(modpackDir, "mods");
+		libsDir = new File(modpackDir, "lib");
+		coremodsDir = new File(modpackDir, "coremods");
 		modconfigsDir = new File(modpackDir, "config");
 		resourceDir = new File(modpackDir, "resources");
 
@@ -94,8 +98,12 @@ public class GameUpdater implements DownloadListener {
 		backupDir.mkdirs();
 		savesDir.mkdirs();
 		modsDir.mkdirs();
+		libsDir.mkdirs();
+		coremodsDir.mkdirs();
 		modconfigsDir.mkdirs();
 		resourceDir.mkdirs();
+		
+		System.setProperty("minecraft.applet.TargetDirectory", modpackDir.getAbsolutePath());
 	}
 
 	public void updateMC() throws Exception {
@@ -454,9 +462,13 @@ public class GameUpdater implements DownloadListener {
 			zip.createNewFile();
 			stateChanged(String.format("Backing up previous build to '%s'...", zip.getName()), 0);
 			addFilesToExistingZip(zip, getFiles(modpackDir, exclude, rootDir), rootDir, false);
-			stateChanged(String.format("Backied up previous build to '%s'...", zip.getName()), 100);
+			stateChanged(String.format("Backed up previous build to '%s'...", zip.getName()), 100);
 
 			if (modsDir.exists()) FileUtils.deleteDirectory(modsDir);
+
+			if (libsDir.exists()) FileUtils.deleteDirectory(libsDir);
+			
+			if (coremodsDir.exists()) FileUtils.deleteDirectory(coremodsDir);
 
 			if (modconfigsDir.exists()) FileUtils.deleteDirectory(modconfigsDir);
 

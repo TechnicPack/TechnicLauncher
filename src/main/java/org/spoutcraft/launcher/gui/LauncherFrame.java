@@ -26,8 +26,10 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JOptionPane;
 
-import org.spoutcraft.launcher.Launcher;
-import org.spoutcraft.launcher.MinecraftAppletEnglober;
+
+import net.minecraft.Launcher;
+
+import org.spoutcraft.launcher.LauncherController;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.Util;
@@ -38,7 +40,7 @@ import org.spoutcraft.launcher.modpacks.ModPackYML;
 
 public class LauncherFrame extends Frame implements WindowListener {
 	private static final long				serialVersionUID	= 4524937541564722358L;
-	private MinecraftAppletEnglober	minecraft;
+	private Launcher	minecraft;
 	private LoginForm								loginForm					= null;
 
 	public static final int					RETRYING_LAUNCH		= -1;
@@ -68,7 +70,7 @@ public class LauncherFrame extends Frame implements WindowListener {
 	public int runGame(String user, String session, String downloadTicket, String mcpass) {
 		Applet applet = null;
 		try {
-			applet = Launcher.getMinecraftApplet();
+			applet = LauncherController.getMinecraftApplet();
 		} catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {
@@ -92,7 +94,7 @@ public class LauncherFrame extends Frame implements WindowListener {
 			return ERROR_IN_LAUNCH;
 		}
 
-		minecraft = new MinecraftAppletEnglober(applet);
+		minecraft = new Launcher(applet);
 
 		String launcherPath = String.format("%s/%s", PlatformUtils.LAUNCHER_DIR, ModPackListYML.currentModPack);
 
