@@ -28,6 +28,7 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 //import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel;
 
 import org.spoutcraft.launcher.gui.LoadingScreen;
 import org.spoutcraft.launcher.gui.LoginForm;
@@ -178,8 +179,9 @@ public class Main {
 		if (osType != null) Util.log("Is 64-bit: '%s'", osType.contains("64"));
 
 		try {
-			UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel");
-			//                        com
+			UIManager.setLookAndFeel(new SyntheticaBlackEyeLookAndFeel());
+                        
+			//
 			//UIManager.setLookAndFeel(new com.sun.java.swing.plaf.nimbus.nim);
 			//UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 			//defaults.put("nimbusOrange", defaults.get("nimbusBase"));
