@@ -16,7 +16,7 @@
  */
 package org.spoutcraft.launcher;
 
-import java.awt.Color;
+//import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JFrame;
-import javax.swing.UIDefaults;
+//import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 import org.spoutcraft.launcher.gui.LoadingScreen;
@@ -38,7 +38,7 @@ import com.beust.jcommander.JCommander;
 public class Main {
 
 	static String[] args_temp;
-	public static String build = "1.0.1.1";
+	public static String build = "2.0";
 	public static String currentPack;
 	static File	recursion;
 	public static LoginForm	loginForm;
@@ -47,6 +47,7 @@ public class Main {
 		main(new String[0]);
 	}
 
+	@SuppressWarnings("unused")
 	public static void reboot(String memory) {
 		try {
 			int memoryAllocation = SettingsUtil.getMemorySelection();
@@ -144,15 +145,15 @@ public class Main {
 				mem = 1024;
 			}
 			recursion.createNewFile();
-			if (isDebug()) System.exit(0);
-			else reboot("-Xmx" + mem + "m");
+			//if (isDebug()) System.exit(0);
+			//else reboot("-Xmx" + mem + "m");
 			// }
 		}
 
 		if (PlatformUtils.getPlatform() == PlatformUtils.OS.macos) {
 			try {
 				System.setProperty("apple.laf.useScreenMenuBar", "true");
-				System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Technic Launcher");
+				System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Atex Launcher");
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception ignore) {
 			}
@@ -177,12 +178,13 @@ public class Main {
 		if (osType != null) Util.log("Is 64-bit: '%s'", osType.contains("64"));
 
 		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-
-			UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-			defaults.put("nimbusOrange", defaults.get("nimbusBase"));
-			UIManager.put("ProgressBar.selectionForeground", Color.white);
-			UIManager.put("ProgressBar.selectionBackground", Color.black);
+			UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel");
+			//                        com
+			//UIManager.setLookAndFeel(new com.sun.java.swing.plaf.nimbus.nim);
+			//UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+			//defaults.put("nimbusOrange", defaults.get("nimbusBase"));
+			//UIManager.put("ProgressBar.selectionForeground", Color.white);
+			//UIManager.put("ProgressBar.selectionBackground", Color.black);
 		} catch (Exception e) {
 			Util.log("Warning: Can't get system LnF: " + e);
 		}

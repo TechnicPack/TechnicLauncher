@@ -1,134 +1,116 @@
+/*
+ * ModsDialog.java
+ *
+ * Created on __DATE__, __TIME__
+ */
+
 package org.spoutcraft.launcher.gui;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+/**
+ *
+ * @author  __USER__
+ */
+public class ModsDialog extends javax.swing.JDialog {
 
-import javax.swing.AbstractButton;
-import javax.swing.AbstractListModel;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+	/** Creates new form ModsDialog */
+	public ModsDialog(java.awt.Frame parent, boolean modal) {
+		super(parent, modal);
+		initComponents();
+	}
 
-public class ModsDialog extends JDialog implements ActionListener {
-	private final JPanel								contentPanel	= new JPanel();
-	protected JToggleButton[]						modLists;
-	protected Map<Integer, ButtonGroup>	groups;
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        qualityGroup = new javax.swing.ButtonGroup();
+        blurBox = new javax.swing.JCheckBox();
+        blurSlider = new javax.swing.JSlider();
+        highQuality = new javax.swing.JRadioButton();
+        lowQuality = new javax.swing.JRadioButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        blurBox.setLabel("Enable Blur");
+        blurBox.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                blurBoxMousePressed(evt);
+            }
+        });
+
+        blurSlider.setForeground(new java.awt.Color(25, 25, 25));
+        blurSlider.setMajorTickSpacing(10);
+        blurSlider.setMinorTickSpacing(1);
+        blurSlider.setPaintTicks(true);
+        blurSlider.setValue(35);
+        blurSlider.setEnabled(false);
+        blurSlider.setOpaque(false);
+
+        highQuality.setText("jRadioButton1");
+
+        lowQuality.setText("jRadioButton2");
+        lowQuality.setAutoscrolls(true);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(blurBox)
+                    .addComponent(lowQuality, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(highQuality, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(blurSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(blurSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(blurBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(highQuality)
+                    .addComponent(lowQuality))
+                .addContainerGap(234, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+	private void blurBoxMousePressed(java.awt.event.MouseEvent evt) {
+		//blurSlider
+	}
+
+	                       
 
 	/**
-	 * Create the dialog.
+	 * @param args the command line arguments
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
-	public ModsDialog(List<Map<String, String>> modNameList) {
-		setTitle("Select Mods to Install");
-		setBounds(100, 100, 616, 492);
-		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setLayout(new BorderLayout());
-		contentPanel.setOpaque(false);
-
-		groups = new HashMap<Integer, ButtonGroup>();
-
-		if (modNameList != null) {
-			modLists = new JToggleButton[modNameList.size()];
-			JToggleButton item = null;
-
-			for (int i = 0; i < modNameList.size(); i++) {
-				Map<String, String> modDetails = modNameList.get(i);
-				if (modDetails.containsKey("groupid")) {
-					item = new JRadioButton(modDetails.get("name"), false);
-					int groupid = Integer.parseInt(modDetails.get("groupid"));
-					if (!groups.containsKey(groupid)) {
-						groups.put(groupid, new ButtonGroup());
+	public static void main(String args[]) {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				ModsDialog dialog = new ModsDialog(new javax.swing.JFrame(),
+						true);
+				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+					public void windowClosing(java.awt.event.WindowEvent e) {
+						System.exit(0);
 					}
-					groups.get(groupid).add(item);
-				} else item = new JCheckBox(modDetails.get("name"), false);
-
-				item.setOpaque(false);
-				item.setFocusPainted(false);
-				item.setHorizontalAlignment(SwingConstants.LEFT);
-
-				modLists[i] = item;
+				});
+				dialog.setVisible(true);
 			}
-		} else {
-			modLists = new JCheckBox[0];
-		}
-
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		{
-			CheckBoxList modList = new CheckBoxList();
-			modList.setOpaque(false);
-			modList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			modList.setModel(new AbstractListModel() {
-				public int getSize() {
-					return modLists.length;
-				}
-
-				public Object getElementAt(int index) {
-					return modLists[index];
-				}
-			});
-			contentPanel.add(modList);
-		}
-		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				JButton installButton = new JButton("Install");
-				installButton.setActionCommand("Install");
-				installButton.addActionListener(this);
-				buttonPane.add(installButton);
-			}
-			{
-				JButton uninstallButton = new JButton("Uninstall");
-				uninstallButton.setActionCommand("Uninstall");
-				uninstallButton.addActionListener(this);
-				buttonPane.add(uninstallButton);
-			}
-			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
-				okButton.addActionListener(this);
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				cancelButton.addActionListener(this);
-				buttonPane.add(cancelButton);
-			}
-		}
+		});
 	}
 
-	public List<Boolean>	ModsSelected	= new ArrayList<Boolean>();
-
-	public void actionPerformed(ActionEvent evt) {
-		String id = evt.getActionCommand();
-		if (id.equals("OK")) {
-			ModsSelected.clear();
-			for (int i = 0; i < modLists.length; i++) {
-				AbstractButton button = modLists[i];
-				ModsSelected.add(button.isSelected());
-			}
-
-			this.setVisible(false);
-			this.dispose();
-		} else if (id.equals("Cancel")) {
-			this.setVisible(false);
-			this.dispose();
-		}
-	}
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JCheckBox blurBox;
+    private javax.swing.JSlider blurSlider;
+    private javax.swing.JRadioButton highQuality;
+    private javax.swing.JRadioButton lowQuality;
+    private javax.swing.ButtonGroup qualityGroup;
+    // End of variables declaration//GEN-END:variables
 
 }

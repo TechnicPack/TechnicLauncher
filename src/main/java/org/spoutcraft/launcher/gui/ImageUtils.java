@@ -24,8 +24,7 @@ public class ImageUtils {
 			int type = BufferedImage.TYPE_INT_ARGB;// originalImage.getType() == 0 ?
 																							// BufferedImage.TYPE_INT_ARGB :
 																							// originalImage.getType();
-
-			buttons.add(drawCropped(contentPane, listener, originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8)); // HAT
+			//buttons.add(drawCropped(contentPane, listener, originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8)); // HAT
 
 			buttons.add(drawCropped(contentPane, listener, originalImage, type, 8, 8, 16, 16, x, y, 7)); // HEAD
 

@@ -123,7 +123,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public String															workingDir				= PlatformUtils.getWorkingDirectory().getAbsolutePath();
 	public static final ModPackUpdater				gameUpdater				= new ModPackUpdater();
 	OptionDialog															options						= null;
-	ModsDialog																mods							= new ModsDialog(ModPackYML.getModList());
+	ModsDialog																mods							= new ModsDialog(null, true);
 	Container																	loginPane					= new Container();
 	Container																	offlinePane				= new Container();
 	// private final JLabel lblLogo;
@@ -147,7 +147,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		optionsButton.addActionListener(this);
 		optionsButton.setEnabled(false);
 		modsButton.setFont(new Font("Arial", Font.PLAIN, 11));
-		modsButton.setOpaque(false);
+		modsButton.setOpaque(true);
 		modsButton.addActionListener(this);
 		usernameField.setFont(new Font("Arial", Font.PLAIN, 11));
 		usernameField.addActionListener(this);
@@ -178,7 +178,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		}
 		String[] itemArray = new String[i];
 		modpackList = new JComboBox(items.toArray(itemArray));
-		modpackList.setBounds(10, 10, 328, 100);
+		modpackList.setBounds(10, 10, 400, 100);
 		ComboBoxRenderer renderer = new ComboBoxRenderer();
 		renderer.setPreferredSize(new Dimension(200, 110));
 		modpackList.setRenderer(renderer);
@@ -222,15 +222,15 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 
-		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
+		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Want the latest version?</u></html>", "http://tinyurl.com/atex-disclaimer");
 		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
 		purchaseAccount.setBounds(243, 70, 111, 14);
 
-		purchaseAccount.setText("<html><u>Need an account?</u></html>");
+		purchaseAccount.setText("<html><u>Disclaimer</u></html>");
 		purchaseAccount.setFont(new Font("Arial", Font.PLAIN, 11));
 		purchaseAccount.setForeground(new Color(0, 0, 255));
 
-		JLabel wikiLink = new HyperlinkJLabel("<html><u>Technic WebSite</u></html>", "http://technicpack.net/");
+		JLabel wikiLink = new HyperlinkJLabel("<html><u>Atex Github Repository</u></html>", "https://github.com/Triforce1/Spoutcraft-Launcher");
 		wikiLink.setHorizontalAlignment(SwingConstants.RIGHT);
 		wikiLink.setBounds(233, 85, 109, 14);
 
@@ -346,7 +346,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 
 		// loginButton.setEnabled(true); // enable once logins are read
-		modsButton.setEnabled(false);
+		modsButton.setEnabled(true);
 		setResizable(false);
 
 		if (Main.isOffline) {
@@ -369,7 +369,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		if (SettingsUtil.getModPackSelection() != null) {
 			updateBranding();
 		} else {
-			setTitle("Technic Launcher - No Modpack Selected");
+			setTitle("Atex Launcher - No Modpack Selected");
 		}
 	}
 
@@ -396,7 +396,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				loginButton.setEnabled(true);
 				optionsButton.setEnabled(true);
 				setIconImage(Toolkit.getDefaultToolkit().getImage(ModPackYML.getModPackIcon()));
-				setTitle(String.format("Technic Launcher - %s - (%s)", Main.build, ModPackListYML.currentModPackLabel));
+				setTitle(String.format("Atex Launcher - %s - (%s)", Main.build, ModPackListYML.currentModPackLabel));
 				options.reloadSettings();
 				MinecraftYML.updateMinecraftYMLCache();
 				setModLoaderEnabled();
@@ -408,7 +408,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public void setModLoaderEnabled() {
 		File modLoaderConfig = new File(GameUpdater.modconfigsDir, "ModLoader.cfg");
 		boolean modLoaderExists = modLoaderConfig.exists();
-		modsButton.setEnabled(modLoaderExists);
+		modsButton.setEnabled(true);
 	}
 
 	@Override
@@ -598,7 +598,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 325);
 		} else if (eventId.equals(modsButton.getText())) {
 			if (ModPackListYML.currentModPack != null) {
-				open(new File(GameUpdater.modconfigsDir, "ModLoader.cfg"));
+				mods.setVisible(true);
 			}
 		} else if (eventId.equals("comboBoxChanged")) {
 			updatePasswordField();

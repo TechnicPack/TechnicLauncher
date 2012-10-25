@@ -54,8 +54,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private static final long		serialVersionUID		= 1L;
 	private final JPanel				contentPanel				= new JPanel();
 	public Map<String, String>	modPackList					= null;
-	JRadioButton								devBuilds						= new JRadioButton("Always use development builds");
-	JRadioButton								recBuilds						= new JRadioButton("Always use recommended builds");
+	JRadioButton								devBuilds						= new JRadioButton("Always use High Resolution builds");
+	JRadioButton								recBuilds						= new JRadioButton("Always use Low Graphics builds");
 	JRadioButton								customBuilds				= new JRadioButton("Manual build selection");
 	// JCheckBox clipboardCheckbox = new
 	// JCheckBox("Allow access to your clipboard");

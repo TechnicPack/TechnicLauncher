@@ -26,7 +26,7 @@ import org.spoutcraft.launcher.async.Download;
 
 public class ModPackUpdater extends GameUpdater {
 
-	public static final String	defaultModPackName	= "technicssp";
+	public static final String	defaultModPackName	= "atex";
 
 	private static final String	baseFallbackURL			= "https://raw.github.com/triforce1/technic/master/";
 	private static final String	fallbackModsURL			= baseFallbackURL + "mods/";
