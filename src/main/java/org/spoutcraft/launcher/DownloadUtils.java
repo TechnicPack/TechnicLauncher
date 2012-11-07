@@ -51,8 +51,7 @@ public class DownloadUtils {
 				} else if (md5 != null && !fileMD5.equals(md5)) {
 					Util.log("Expected MD5: %s Calculated MD5: %s", md5, fileMD5);
 				}
-				
-				break;
+                                break;
 			}
 		}
 
