@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JFrame;
-//import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-import de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel;
 
 import org.spoutcraft.launcher.gui.LoadingScreen;
 import org.spoutcraft.launcher.gui.LoginForm;
@@ -37,19 +35,21 @@ import org.spoutcraft.launcher.logs.SystemConsoleListener;
 import com.beust.jcommander.JCommander;
 
 public class Main {
-
+        
 	static String[] args_temp;
 	public static String build = "2.0";
 	public static String currentPack;
 	static File	recursion;
 	public static LoginForm	loginForm;
 	public static boolean isOffline	= false;
+        public static boolean mandebug;
 	public Main() throws Exception {
 		main(new String[0]);
 	}
 
 	@SuppressWarnings("unused")
 	public static void reboot(String memory) {
+                
 		try {
 			int memoryAllocation = SettingsUtil.getMemorySelection();
 			// int mem = (512) * memorySelection;
@@ -58,7 +58,7 @@ public class Main {
 				Util.log("32-bit Vm being used. Max memory is 1.5Gb");
 				memoryAllocation = 1536;
 			}
-		    String pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+		        String pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 
 			ArrayList<String> params = new ArrayList<String>();
 			params.add("java"); // Linux/Mac/whatever
@@ -108,7 +108,7 @@ public class Main {
 	}
 
 	public static boolean isDebug() {
-		return java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp");
+		return java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("-agentlib:jdwp") || mandebug;
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -161,6 +161,7 @@ public class Main {
 		}
 		PlatformUtils.getWorkingDirectory().mkdirs();
 		new File(PlatformUtils.getWorkingDirectory(), "launcher").mkdir();
+                new File(PlatformUtils.getWorkingDirectory(), "shaders").mkdir();
 
 		SystemConsoleListener listener = new SystemConsoleListener();
 
@@ -179,9 +180,8 @@ public class Main {
 		if (osType != null) Util.log("Is 64-bit: '%s'", osType.contains("64"));
 
 		try {
-			UIManager.setLookAndFeel(new SyntheticaBlackEyeLookAndFeel());
-                        
-			//
+			UIManager.setLookAndFeel("de.javasoft.plaf.synthetica.SyntheticaBlackEyeLookAndFeel");
+			//                        com
 			//UIManager.setLookAndFeel(new com.sun.java.swing.plaf.nimbus.nim);
 			//UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 			//defaults.put("nimbusOrange", defaults.get("nimbusBase"));
@@ -199,7 +199,7 @@ public class Main {
 		loginForm.setLocationByPlatform(true);
 		loginForm.setVisible(true);
 		ls.close();
-
+                
 	}
 
 	private static String getBuild() {
