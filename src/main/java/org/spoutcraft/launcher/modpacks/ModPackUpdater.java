@@ -26,11 +26,13 @@ import org.spoutcraft.launcher.async.Download;
 
 public class ModPackUpdater extends GameUpdater {
 
-	public static final String	defaultModPackName	= "atex";
+	public static final String	defaultModPackName	= ""
+                + "";
 
 	private static final String	baseFallbackURL			= "https://raw.github.com/triforce1/technic/master/";
 	private static final String	fallbackModsURL			= baseFallbackURL + "mods/";
 
+        @SuppressWarnings("unchecked")
 	public void updateModPackMods() {
 		try {
 
@@ -55,7 +57,9 @@ public class ModPackUpdater extends GameUpdater {
 				String installType = modProperties.containsKey("installtype") ? (String) modProperties.get("installtype") : "zip";
 				String fullFilename = modName + "-" + version + "." + installType;
 				Boolean isOptional = modProperties.containsKey("optional") ? (Boolean) modProperties.get("optional") : false;
-
+                                //TODO: Add optional button
+                                
+                                
 				String installedModVersion = InstalledModsYML.getInstalledModVersion(modName);
 
 				// If installed mods md5 hash is the same as server's version
@@ -66,6 +70,8 @@ public class ModPackUpdater extends GameUpdater {
 						continue;
 					}
 				}
+                                
+                                
 
 				File modFile = new File(tempDir, fullFilename);
 
@@ -195,7 +201,8 @@ public class ModPackUpdater extends GameUpdater {
 			e.printStackTrace();
 		}
 	}
-
+        
+        @SuppressWarnings("unchecked")
 	public boolean isModpackUpdateAvailable() throws IOException {
 
 		Map<String, Object> modLibrary = (Map<String, Object>) ModLibraryYML.getModLibraryYML().getProperty("mods");
@@ -204,20 +211,20 @@ public class ModPackUpdater extends GameUpdater {
 		for (Map.Entry<String, Object> modEntry2 : currentModList.entrySet()) {
 			String modName = modEntry2.getKey();
 
-			if (!modLibrary.containsKey(modName)) { throw new IOException("Mod is missing from the mod library"); }
-
+			if (!modLibrary.containsKey(modName)) { throw new IOException(String.format("Mod %s is missing from the mod library", modName)); }
 			Map<String, Object> modProperties = (Map<String, Object>) modLibrary.get(modName);
 			Map<String, Object> modVersions = (Map<String, Object>) modProperties.get("versions");
 
 			String version = modEntry2.getValue().toString();
 
-			if (!modVersions.containsKey(version)) { throw new IOException("Mod version is missing from the mod library"); }
+			if (!modVersions.containsKey(version)) { throw new IOException(String.format("Mod %s version %s is missing from the mod library", modName, version)); }
 
 			String installType = modProperties.get("installtype").toString();
 			String fullFilename = modName + "-" + version + "." + installType;
 
+                        //FIXME: Atex always asks for update
 			String md5Name = "mods\\" + modName + "\\" + fullFilename;
-			//if (!MD5Utils.checksumCachePath(fullFilename, md5Name)) { return true; }
+			if (!MD5Utils.checksumCachePath(fullFilename, md5Name)) { return true; }
 			String installedModVersion = InstalledModsYML.getInstalledModVersion(modName);
 			if (installedModVersion == null || !installedModVersion.equals(version)) { return true; }
 		}
