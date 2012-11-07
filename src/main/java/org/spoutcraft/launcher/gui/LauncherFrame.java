@@ -23,10 +23,14 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.*;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
+import org.spoutcraft.launcher.GameUpdater;
 
 import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
@@ -66,6 +70,11 @@ public class LauncherFrame extends Frame implements WindowListener {
 	}
 
 	public int runGame(String user, String session, String downloadTicket, String mcpass) {
+                if (Main.isOffline) { 
+                    if (GameUpdater.shadersEnabled()) {
+                        GameUpdater.addShaders();
+                    }
+                }
 		Applet applet = null;
 		try {
 			applet = Launcher.getMinecraftApplet();
@@ -74,7 +83,7 @@ public class LauncherFrame extends Frame implements WindowListener {
 		} catch (MinecraftVerifyException verify) {
 			OptionDialog.clearCache();
 			JOptionPane.showMessageDialog(getParent(), "The minecraft installation was corrupted. \nThe minecraft installation has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
-			this.setVisible(false);
+			//this.setVisible(false);
 			this.dispose();
 			return ERROR_IN_LAUNCH;
 		}
