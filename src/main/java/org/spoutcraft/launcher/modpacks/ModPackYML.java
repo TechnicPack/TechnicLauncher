@@ -5,21 +5,30 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.util.config.Configuration;
+import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.YmlUtils;
 
 public class ModPackYML {
-
-	private static final String			MODPACK_YML		= "modpack.yml";
-	private static final String			FALLBACK_URL	= String.format("http://technic.freeworldsgaming.com/%s", MODPACK_YML);
-
-	private static volatile boolean	updated				= false;
-	private static final Object			key						= new Object();
+    
+	private static final String YAML_NAME = "modpack.yml";
+        private static final String SHADERS_NAME = "modpack_shaders.yml";
+	private static volatile boolean	updated	= false;
+	private static final Object key	= new Object();
 
 	private static File getModPackYMLFile() {
-		return new File(ModPackListYML.currentModPackDirectory, MODPACK_YML);
+		return new File(ModPackListYML.currentModPackDirectory, getModPackName());
 	}
 
+        public static String getModPackName() {
+            if ((ModPackListYML.currentModPack + "/" + SHADERS_NAME) != null) {
+                return GameUpdater.shadersEnabled() ? SHADERS_NAME : YAML_NAME;
+            } else {
+                return YAML_NAME;
+                //TODO: the current modpack might not support shaders
+            }
+        }
+        
 	public static Configuration getModPackYML() {
 		updateModPackYML();
 		Configuration config = new Configuration(getModPackYMLFile());
@@ -36,7 +45,7 @@ public class ModPackYML {
 			synchronized (key) {
 				String selected = getSelectedBuild();
 
-				YmlUtils.downloadYmlFile(ModPackListYML.currentModPack + "/" + MODPACK_YML, FALLBACK_URL, getModPackYMLFile());
+				YmlUtils.downloadYmlFile(ModPackListYML.currentModPack + "/" + getModPackName(), null, getModPackYMLFile());
 
 				Configuration config = new Configuration(getModPackYMLFile());
 				config.load();
@@ -71,7 +80,7 @@ public class ModPackYML {
 	}
 
 	public static List<Map<String, String>> getModList() {
-		// TODO Auto-generated method stub
+		//STUB: Auto-generated method stub
 		return null;
 	}
 
@@ -87,6 +96,7 @@ public class ModPackYML {
 		return new File(ModPackListYML.currentModPackDirectory, "resources" + File.separator + "favicon.png").getAbsolutePath();
 	}
 
+        @SuppressWarnings("unchecked")
 	public static String[] getModpackBuilds() {
 		Configuration config = getModPackYML();
 		Map<String, Object> builds = (Map<String, Object>) config.getProperty("builds");
