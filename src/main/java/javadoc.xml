@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+  <target name="javadoc">
+    <javadoc
+      access="public"
+      author="false"
+      classpath="."
+      destdir="docs"
+      doctitle="TinyLaF 1.4.0"
+      nodeprecated="true"
+      nodeprecatedlist="true"
+      noindex="false"
+      nonavbar="false"
+      notree="false"
+      overview="./de/muntjak/tinylookandfeel/overview.html"
+      packagenames="de.muntjak.tinylookandfeel.table"
+      source="1.4"                
+      sourcefiles="
+        ./de/muntjak/tinylookandfeel/Theme.java,
+        ./de/muntjak/tinylookandfeel/TinyTableHeaderUI.java,
+        ./de/muntjak/tinylookandfeel/ThemeDescription.java"
+      sourcepath="."
+      splitindex="false"
+      use="true"
+      version="false"
+    />
+  </target>
+</project>
