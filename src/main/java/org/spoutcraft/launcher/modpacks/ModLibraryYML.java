@@ -7,12 +7,12 @@ import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.YmlUtils;
 
 public class ModLibraryYML {
+    
+	public static final String MODLIBRARY_YML = "modlibrary.yml";
+	public static final File modLibraryYML = new File(GameUpdater.workDir, MODLIBRARY_YML);
 
-	public static final String			MODLIBRARY_YML	= "modlibrary.yml";
-	public static final File				modLibraryYML		= new File(GameUpdater.workDir, MODLIBRARY_YML);
-
-	private static volatile boolean	updated					= false;
-	private static final Object			key							= new Object();
+	private static volatile boolean	updated	= false;
+	private static final Object key	= new Object();
 
 	public static void updateModLibraryYML() {
 		if (updated) { return; }

@@ -45,6 +45,7 @@ public class InstalledModsYML {
 		return getInstalledModsConfig().save();
 	}
 
+        @SuppressWarnings("unchecked")
 	public static Map<String, String> getInstalledMods() {
 		return (Map<String, String>) getInstalledModsConfig().getProperty("mods");
 	}
