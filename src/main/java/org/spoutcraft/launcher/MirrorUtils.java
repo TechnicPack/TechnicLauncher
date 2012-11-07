@@ -23,8 +23,7 @@ public class MirrorUtils {
 	private static final Random		rand				= new Random();
 
 	public static String getMirrorUrl(String mirrorURI, String fallbackUrl, DownloadListener listener) {
-		try {
-			
+		try { 
 			if (Main.isOffline) return null;
 
 			Map<String, Integer> mirrors = getMirrors();

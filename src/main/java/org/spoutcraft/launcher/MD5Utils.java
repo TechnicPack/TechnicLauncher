@@ -56,6 +56,7 @@ public class MD5Utils {
 
 	public static String getMinecraftMD5(String md5Hash) {
 		Configuration config = MinecraftYML.getMinecraftYML();
+                @SuppressWarnings("unchecked")
 		Map<String, Map<String, String>> builds = (Map<String, Map<String, String>>) config.getProperty("versions");
 		for (String version : builds.keySet()) {
 			String minecraftMD5 = builds.get(version).get("minecraft");
