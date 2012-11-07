@@ -48,33 +48,38 @@ import org.spoutcraft.launcher.async.DownloadListener;
 import org.spoutcraft.launcher.exception.UnsupportedOSException;
 
 import SevenZip.LzmaAlone;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.Scanner;
 
 public class GameUpdater implements DownloadListener {
-	public static final String	LAUNCHER_DIRECTORY	= "launcher";
-	public static final File		WORKING_DIRECTORY		= PlatformUtils.getWorkingDirectory();
-
+	public static final String LAUNCHER_DIRECTORY = "launcher";
+	public static final File WORKING_DIRECTORY = PlatformUtils.getWorkingDirectory();
+		
+        /* Minecraft Updating Arguments */
+	public String user = "Player";
+	public String downloadTicket = "1";
+		
+        /* Files */
+	public static File modpackDir = new File(WORKING_DIRECTORY, "");
+	public static File binDir = new File(WORKING_DIRECTORY, "bin");
+	public static final File cacheDir = new File(WORKING_DIRECTORY, "cache");
+	public static final File tempDir = new File(WORKING_DIRECTORY, "temp");
+	public static File backupDir = new File(WORKING_DIRECTORY, "backups");
+	public static final File workDir = new File(WORKING_DIRECTORY, LAUNCHER_DIRECTORY);
+	public static File savesDir = new File(WORKING_DIRECTORY, "saves");
+	public static File modsDir = new File(WORKING_DIRECTORY, "mods");
+	public static File modconfigsDir = new File(WORKING_DIRECTORY, "config");
+	public static File resourceDir = new File(WORKING_DIRECTORY, "resources");
+        public static File shaderDir = new File(WORKING_DIRECTORY, "shaders");
+	
+	
 	/* Minecraft Updating Arguments */
-	public String								user								= "Player";
-	public String								downloadTicket			= "1";
-
-	/* Files */
-	public static File					modpackDir					= new File(WORKING_DIRECTORY, "");
-	public static File					binDir							= new File(WORKING_DIRECTORY, "bin");
-	public static final File		cacheDir						= new File(WORKING_DIRECTORY, "cache");
-	public static final File		tempDir							= new File(WORKING_DIRECTORY, "temp");
-	public static File					backupDir						= new File(WORKING_DIRECTORY, "backups");
-	public static final File		workDir							= new File(WORKING_DIRECTORY, LAUNCHER_DIRECTORY);
-	public static File					savesDir						= new File(WORKING_DIRECTORY, "saves");
-	public static File					modsDir							= new File(WORKING_DIRECTORY, "mods");
-	public static File					modconfigsDir				= new File(WORKING_DIRECTORY, "config");
-	public static File					resourceDir					= new File(WORKING_DIRECTORY, "resources");
-
-	/* Minecraft Updating Arguments */
-	public final String					baseURL							= "http://s3.amazonaws.com/MinecraftDownload/";
-	public final String					latestLWJGLURL			= "http://mirror.technicpack.net/Technic/Libraries/lwjgl/";
-	public final String					spoutcraftMirrors		= "http://cdn.getspout.org/mirrors.html";
-
-	private DownloadListener		listener;
+	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
+	public final String latestLWJGLURL = "http://mirror.technicpack.net/Technic/Libraries/lwjgl/";
+	public final String spoutcraftMirrors = "http://cdn.getspout.org/mirrors.html";
+	
+	private static DownloadListener listener;
 
 	public GameUpdater() {
 	}
@@ -376,10 +381,6 @@ public class GameUpdater implements DownloadListener {
 			}
 		}
 		build.install();
-
-		// TODO: remove this once this build has been out for a few weeks
-		File spoutcraftVersion = new File(GameUpdater.workDir, "versionLauncher");
-		spoutcraftVersion.delete();
 	}
 
 	public boolean isSpoutcraftUpdateAvailable() {
@@ -417,8 +418,8 @@ public class GameUpdater implements DownloadListener {
 	}
 
 	public static void copy(File input, File output) {
-		FileInputStream inputStream = null;
-		FileOutputStream outputStream = null;
+		FileInputStream inputStream;
+		FileOutputStream outputStream;
 		try {
 			inputStream = new FileInputStream(input);
 			outputStream = new FileOutputStream(output);
@@ -454,6 +455,7 @@ public class GameUpdater implements DownloadListener {
 			zip.createNewFile();
 			stateChanged(String.format("Backing up previous build to '%s'...", zip.getName()), 0);
 			addFilesToExistingZip(zip, getFiles(modpackDir, exclude, rootDir), rootDir, false);
+                        
 			stateChanged(String.format("Backied up previous build to '%s'...", zip.getName()), 100);
 
 			if (modsDir.exists()) FileUtils.deleteDirectory(modsDir);
@@ -487,14 +489,11 @@ public class GameUpdater implements DownloadListener {
 		return false;
 	}
 
+        
+        @SuppressWarnings("unchecked")
 	public static boolean canPlayOffline(String modPackName) {
 		try {
-			File path = (File) AccessController.doPrivileged(new PrivilegedExceptionAction() {
-				@Override
-				public Object run() throws Exception {
-					return WORKING_DIRECTORY;
-				}
-			});
+                   File path = (File) AccessController.doPrivileged(new PrivilegedExceptionActionImpl());
 			if (!path.exists()) { return false; }
 			if (!new File(path, "lastlogin").exists()) { return false; }
 
@@ -508,7 +507,215 @@ public class GameUpdater implements DownloadListener {
 		}
 		return false;
 	}
+        
+        public static boolean shadersEnabled() {
+            String contents = "";
+            int result;
+            File composite_ash = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "composite.ash");
+            try
+            {
+                Scanner scanner = new Scanner(composite_ash);
+                while (scanner.hasNextLine())
+                {
+                    contents += "\n";
+                    contents += scanner.nextLine();
+                }
+                scanner.close();
+                if (contents.contains("//use shaders"))
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
+            }
+            catch(FileNotFoundException e)
+            {
+                result = -1;
+            }
+            if (result == 1) {
+                return true;
+            }
+            if (result == 0) {
+                return false;
+            }
+            if (result == -1)
+            {
+                try
+                {
+                    DownloadUtils.downloadFile (
+                            MirrorUtils.getMirrorUrl("/mods/shaders/shaders-composite.fsh", null),
+                            GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "composite.fsh");
+                    DownloadUtils.downloadFile (
+                            MirrorUtils.getMirrorUrl("/mods/shaders/shaders-final.fsh", null),
+                            GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "final.fsh");
+                    DownloadUtils.downloadFile (
+                            MirrorUtils.getMirrorUrl("/mods/shaders/shaders-terrain.vsh", null),
+                            GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "gbuffers_terrain.vsh");
+                    DownloadUtils.downloadFile (
+                            MirrorUtils.getMirrorUrl("/mods/shaders/shaders-composite.ash", null),
+                            GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "composite.ash");
+                    DownloadUtils.downloadFile (
+                            MirrorUtils.getMirrorUrl("/mods/shaders/shaders-final.ash", null),
+                            GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "final.ash");
+                    DownloadUtils.downloadFile (
+                            MirrorUtils.getMirrorUrl("/mods/shaders/shaders-terrain.ash", null),
+                            GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "gbuffers_terrain.ash");
+                    return false;
+                }
+                catch(IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            return false;
+        }
 
+        public static void addShaders() {
+            if (shadersEnabled()) {
+                File Composite = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "raw" + File.pathSeparator + "shaders", "composite.fsh");
+                File cash = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "composite.ash");
+                File cfsh = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "composite.fsh");
+                String Compash = "";
+                String Compfish = "";
+                Scanner compa;
+                Scanner compf;
+                BufferedWriter outa;
+
+                File Final = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "raw" + File.pathSeparator + "shaders", "final.fsh");
+                File fash = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "final.ash");
+                File ffsh = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "final.fsh");
+                String Finash = "";
+                String Finfish = "";
+                Scanner fina;
+                Scanner finf;
+                BufferedWriter outb;
+
+                File Terra = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "raw" + File.pathSeparator + "shaders", "gbuffers_terrain.vsh");
+                File tash = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "gbuffers_terrain.ash");
+                File tfsh = new File(GameUpdater.shaderDir.getPath() + File.pathSeparator + "data" + File.pathSeparator + "shaders", "gbuffers_terrain.vsh");
+                String Terash = "";
+                String Terfish = "";
+                Scanner tina;
+                Scanner tinf;
+                BufferedWriter outc;
+
+                if (Composite.exists()) {
+                    Composite.delete();
+                }
+
+                if (Final.exists()) {
+                    Final.delete();
+                }
+
+                if (Terra.exists()) {
+                    Terra.delete();
+                }
+
+                try
+                {
+                    Composite.createNewFile();
+
+                    compa = new Scanner(cash);
+                    while (compa.hasNextLine())
+                    {
+                        Compash += "\n";
+                        Compash += compa.nextLine();
+                    }
+                    compa.close();
+
+                    compf = new Scanner(cfsh);
+                    while (compf.hasNextLine())
+                    {
+                        Compfish += "\n";
+                        Compfish += compf.nextLine();
+                    }
+                    compf.close();
+
+                    outa = new BufferedWriter(new FileWriter(Composite));
+                    outa.write(Compash);
+                    outa.newLine();
+                    outa.write(Compfish);
+                    outa.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+                try
+                {
+                    Final.createNewFile();
+
+                    fina = new Scanner(fash);
+                    while (fina.hasNextLine())
+                    {
+                        Finash += "\n";
+                        Finash += fina.nextLine();
+                    }
+                    fina.close();
+
+                    finf = new Scanner(ffsh);
+                    while (finf.hasNextLine())
+                    {
+                        Finfish += "\n";
+                        Finfish += finf.nextLine();
+                    }
+                    finf.close();
+
+                    outb = new BufferedWriter(new FileWriter(Final));
+                    outb.write(Finash);
+                    outb.newLine();
+                    outb.write(Finfish);
+                    outb.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+                try
+                {
+                    Terra.createNewFile();
+
+                    tina = new Scanner(tash);
+                    while (tina.hasNextLine())
+                    {
+                        Terash += "\n";
+                        Terash += tina.nextLine();
+                    }
+                    tina.close();
+
+                    tinf = new Scanner(tfsh);
+                    while (tinf.hasNextLine())
+                    {
+                        Terfish += "\n";
+                        Terfish += tinf.nextLine();
+                    }
+                    tinf.close();
+
+                    outc = new BufferedWriter(new FileWriter(Terra));
+                    outc.write(Terash);
+                    outc.newLine();
+                    outc.write(Terfish);
+                    outc.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                try
+                {
+                    addFilesToExistingZip(new File(modpackDir + File.pathSeparator + "bin", "modpack.jar"), null, shaderDir + File.pathSeparator + "raw");
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
 	public void addFilesToExistingZip(File zipFile, Set<ClassFile> files, String rootDir, boolean progressBar) throws IOException {
 		File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
 		tempFile.delete();
@@ -579,6 +786,60 @@ public class GameUpdater implements DownloadListener {
 
 		out.close();
 	}
+        
+        public static void addFilesToExistingZip(File zipFile, Set<ClassFile> files, String rootDir) throws IOException {
+		File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
+		tempFile.delete();
+
+		copy(zipFile, tempFile);
+		boolean renameOk = zipFile.renameTo(tempFile);
+		if (!renameOk) {
+			if (tempFile.exists()) {
+				zipFile.delete();
+			} else {
+				throw new RuntimeException("could not rename the file " + zipFile.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
+			}
+		}
+		byte[] buf = new byte[1024];
+
+		ZipInputStream zin = new ZipInputStream(new BufferedInputStream(new FileInputStream(tempFile)));
+		ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
+		ZipEntry entry = zin.getNextEntry();
+		while (entry != null) {
+			String name = entry.getName();
+			ClassFile entryFile = new ClassFile(name);
+			if (!name.contains("META-INF") && !files.contains(entryFile)) {
+				out.putNextEntry(new ZipEntry(name));
+				int len;
+				while ((len = zin.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+			}
+			entry = zin.getNextEntry();
+		}
+		zin.close();
+		for (ClassFile file : files) {
+			try {
+				InputStream in = new FileInputStream(file.getFile());
+
+				String path = file.getPath();
+				path = path.replace(rootDir, "");
+				path = path.replaceAll("\\\\", "/");
+				out.putNextEntry(new ZipEntry(path));
+
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+
+				out.closeEntry();
+				in.close();
+			} catch (IOException e) {
+			}
+		}
+
+		out.close();
+	}
 
 	// I know that is is not the best method but screw it, I am tired of trying
 	// to do it myself :P
@@ -623,10 +884,22 @@ public class GameUpdater implements DownloadListener {
 	@Override
 	public void stateChanged(String fileName, float progress) {
 		fileName = fileName.replace(WORKING_DIRECTORY.getPath(), "");
-		this.listener.stateChanged(fileName, progress);
+		listener.stateChanged(fileName, progress);
 	}
 
 	public void setListener(DownloadListener listener) {
-		this.listener = listener;
+ 		this.listener = listener;
 	}
+        
+        @SuppressWarnings("rawtypes")
+        private static class PrivilegedExceptionActionImpl implements PrivilegedExceptionAction {
+        
+        public PrivilegedExceptionActionImpl() {
+        }
+
+        @Override
+        public Object run() throws Exception {
+                return WORKING_DIRECTORY;
+        }
+    }
 }
