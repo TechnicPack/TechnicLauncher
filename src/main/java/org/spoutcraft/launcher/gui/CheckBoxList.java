@@ -12,8 +12,9 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
+@SuppressWarnings("serial")
 public class CheckBoxList extends JList {
-	protected static Border	noFocusBorder	= new EmptyBorder(1, 1, 1, 1);
+	private static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
 	public CheckBoxList() {
 		setCellRenderer(new CellRenderer());

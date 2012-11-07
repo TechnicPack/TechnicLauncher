@@ -25,6 +25,7 @@ import javax.swing.tree.TreePath;
 
 import org.spoutcraft.launcher.PlatformUtils;
 
+@SuppressWarnings("serial")
 public class CheckBoxNodeTreeSample {
 	/**
 	 * @param args
@@ -74,10 +75,10 @@ public class CheckBoxNodeTreeSample {
 
 		CheckBoxNode accessibilityOptions[] = { new CheckBoxNode("Move system caret with focus/selection changes", false), new CheckBoxNode("Always expand alt text for images", true) };
 		CheckBoxNode browsingOptions[] = { new CheckBoxNode("Notify when downloads complete", true, 0), new CheckBoxNode("Disable script debugging", true, 0), new CheckBoxNode("Use AutoComplete", true), new CheckBoxNode("Browse in a new process", false) };
-		Vector accessVector = new NamedVector("Accessibility", accessibilityOptions);
-		Vector browseVector = new NamedVector("Browsing", browsingOptions);
+		NamedVector accessVector = new NamedVector("Accessibility", accessibilityOptions);
+		NamedVector browseVector = new NamedVector("Browsing", browsingOptions);
 		Object rootNodes[] = { accessVector, browseVector };
-		Vector rootVector = new NamedVector("Root", rootNodes);
+		NamedVector rootVector = new NamedVector("Root", rootNodes);
 
 		Icon empty = new TreeIcon();
 		UIManager.put("Tree.closedIcon", empty);
@@ -85,32 +86,25 @@ public class CheckBoxNodeTreeSample {
 		UIManager.put("Tree.collapsedIcon", empty);
 		UIManager.put("Tree.expandedIcon", empty);
 
-		JTree tree = new JTree(rootVector) {
-			@Override
-			protected void setExpandedState(TreePath path, boolean state) {
-				if (state) {
-					super.setExpandedState(path, state);
-				}
-			}
-		};
+		JTree tree = new JTreeImpl((Vector) rootVector);
 
 		tree.getModel().addTreeModelListener(new TreeModelListener() {
 
 			@Override
 			public void treeStructureChanged(TreeModelEvent e) {
-				// TODO Auto-generated method stub
+				// STUB Auto-generated method stub
 
 			}
 
 			@Override
 			public void treeNodesRemoved(TreeModelEvent e) {
-				// TODO Auto-generated method stub
+				// STUB Auto-generated method stub
 
 			}
 
 			@Override
 			public void treeNodesInserted(TreeModelEvent e) {
-				// TODO Auto-generated method stub
+				// STUB Auto-generated method stub
 
 			}
 
@@ -192,4 +186,18 @@ public class CheckBoxNodeTreeSample {
 			this._image = image;
 		}
 	}
+
+    private static class JTreeImpl extends JTree {
+
+        public JTreeImpl(Vector<?> vector) {
+            super(vector);
+        }
+
+        @Override
+        protected void setExpandedState(TreePath path, boolean state) {
+                if (state) {
+                        super.setExpandedState(path, state);
+                }
+        }
+    }
 }

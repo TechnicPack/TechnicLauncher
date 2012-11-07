@@ -46,9 +46,6 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 	}
 
-	// NOTE: VerifyException is due to multiple classes of the same type in
-	// jars, need to override all classloader methods to fix...
-
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Class<?> result = loadedClasses.get(name); // checks in cached classes

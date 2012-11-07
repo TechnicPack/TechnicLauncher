@@ -13,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class LoadingScreen extends JDialog {
 	public JPanel			contentPane;
 	public JPanel			closePanel;

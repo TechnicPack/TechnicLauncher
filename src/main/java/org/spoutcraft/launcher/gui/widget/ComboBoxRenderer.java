@@ -9,6 +9,7 @@ import javax.swing.ListCellRenderer;
 
 import org.spoutcraft.launcher.modpacks.ModPackListYML;
 
+@SuppressWarnings("serial")
 public class ComboBoxRenderer extends JLabel implements ListCellRenderer {
 
 	public ComboBoxRenderer() {

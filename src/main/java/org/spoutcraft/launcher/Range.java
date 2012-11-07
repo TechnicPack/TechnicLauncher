@@ -34,10 +34,12 @@ public class Range {
 		};
 	}
 
+        @SuppressWarnings("rawtypes")
 	public static Iterable range(final int start, final int stop) {
 		return range(start, stop, 1);
 	}
 
+        @SuppressWarnings("rawtypes")
 	public static Iterable range(final int stop) {
 		return range(0, stop, 1);
 	}
