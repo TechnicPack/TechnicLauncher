@@ -94,40 +94,40 @@ import org.spoutcraft.launcher.modpacks.ModPackYML;
 
 public class LoginForm extends JFrame implements ActionListener, DownloadListener, KeyListener, WindowListener {
 
-	private static final long									serialVersionUID	= 1L;
-	private final JPanel											contentPane;
-	private final JPasswordField							passwordField;
-	private final JComboBox										usernameField			= new JComboBox();
-	private final JButton											loginButton				= new JButton("Login");
-	JButton																		optionsButton			= new JButton("Options");
-	JButton																		modsButton				= new JButton("Mod Select");
-	private final JCheckBox										rememberCheckbox	= new JCheckBox("Remember");
-	final JLabel															background				= new JLabel("Loading...");
-	private final JButton											offlineMode				= new JButton("Offline Mode");
-	private final JButton											tryAgain					= new JButton("Try Again");
-	final JTextPane														editorPane				= new JTextPane();
-	private final JButton											loginSkin1;
-	private final List<JButton>								loginSkin1Image;
-	private final JButton											loginSkin2;
-	private final List<JButton>								loginSkin2Image;
-	private TumblerFeedParsingWorker					tumblerFeed;
-	public final JProgressBar									progressBar;
-	HashMap<String, UserPasswordInformation>	usernames					= new HashMap<String, UserPasswordInformation>();
-	public boolean														mcUpdate					= false;
-	public boolean														spoutUpdate				= false;
-	public boolean														modpackUpdate			= false;
-	public static UpdateDialog								updateDialog;
-	private static String											pass							= null;
-	public static String[]										values						= null;
-	private int																success						= LauncherFrame.ERROR_IN_LAUNCH;
-	public String															workingDir				= PlatformUtils.getWorkingDirectory().getAbsolutePath();
-	public static final ModPackUpdater				gameUpdater				= new ModPackUpdater();
-	OptionDialog															options						= null;
-	ModsDialog																mods							= new ModsDialog(null, true);
-	Container																	loginPane					= new Container();
-	Container																	offlinePane				= new Container();
-	// private final JLabel lblLogo;
-	private final JComboBox						modpackList;
+     private static final long serialVersionUID = 1L;
+     private final JPanel contentPane;
+     private final JPasswordField passwordField;
+     private final JComboBox usernameField = new JComboBox();
+     private final JButton loginButton = new JButton("Login");
+     JButton optionsButton = new JButton("Options");
+     JButton modsButton = new JButton("Mod Select");
+     private final JCheckBox rememberCheckbox = new JCheckBox("Remember");
+     private final JButton offlineMode = new JButton("Offline Mode");
+     private final JButton tryAgain = new JButton("Try Again");
+     final JTextPane editorPane = new JTextPane();
+     private final JButton loginSkin1;
+     private final List<JButton> loginSkin1Image;
+     private final JButton loginSkin2;
+     private final List<JButton> loginSkin2Image;
+     private TumblerFeedParsingWorker tumblerFeed;
+     public final JProgressBar progressBar;
+     HashMap<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
+     public boolean mcUpdate = false;
+     public boolean spoutUpdate = false;
+     public boolean modpackUpdate = false;
+     public static UpdateDialog updateDialog;
+     private static String pass = null;
+     public static String[] values = null;
+     private int success = LauncherFrame.ERROR_IN_LAUNCH;
+     public String workingDir = PlatformUtils.getWorkingDirectory().getAbsolutePath();
+     public static final ModPackUpdater gameUpdater = new ModPackUpdater();
+     OptionDialog options = null;
+     final JLabel background = new JLabel("Loading...");
+     ModsDialog mods = new ModsDialog(null, true);
+     Container loginPane = new Container();
+     Container offlinePane = new Container();
+     // private final JLabel lblLogo;
+     private final JComboBox modpackList;
 
 	public LoginForm() {
 		loadLauncherData();
@@ -135,8 +135,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		LoginForm.updateDialog = new UpdateDialog(this);
 		gameUpdater.setListener(this);
 
-		this.addWindowListener(this);
-
+		addWindowListener(this);
+                
 		loginButton.setFont(new Font("Arial", Font.PLAIN, 11));
 		loginButton.setBounds(272, 13, 86, 23);
 		loginButton.setOpaque(false);
@@ -224,7 +224,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Want the latest version?</u></html>", "http://tinyurl.com/atex-disclaimer");
 		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
-		purchaseAccount.setBounds(243, 70, 111, 14);
+		purchaseAccount.setBounds(243, 60, 111, 14);
 
 		purchaseAccount.setText("<html><u>Disclaimer</u></html>");
 		purchaseAccount.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -232,7 +232,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		JLabel wikiLink = new HyperlinkJLabel("<html><u>Atex Github Repository</u></html>", "https://github.com/Triforce1/Spoutcraft-Launcher");
 		wikiLink.setHorizontalAlignment(SwingConstants.RIGHT);
-		wikiLink.setBounds(233, 85, 109, 14);
+		wikiLink.setBounds(205, 75, 130, 14);
 
 		// wikiLink.setText();
 		wikiLink.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -260,12 +260,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		editorPane.setCaretPosition(0);
 		trans2 = new JLabel();
-		trans2.setBackground(new Color(229, 246, 255, 100));
+		trans2.setBackground(new Color(0, 0, 75, 100));
 		trans2.setOpaque(true);
 		trans2.setBounds(473, 11, 372, 340);
 
 		JLabel login = new JLabel();
-		login.setBackground(new Color(255, 255, 255, 120));
+		login.setBackground(new Color(25, 25, 100, 120));
 		login.setOpaque(true);
 		login.setBounds(473, 362, 372, 99);
 
@@ -331,9 +331,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		background.setHorizontalAlignment(SwingConstants.CENTER);
 		background.setBounds(0, 0, 854, 480);
 		contentPane.add(background);
-
-		// TODO: remove this after next release
-		(new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg")).delete();
 
 		List<Component> order = new ArrayList<Component>(6);
 		order.add(usernameField.getEditor().getEditorComponent());
@@ -890,10 +887,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	}
 
 	public void runGame() {
-		if (ModPackListYML.currentModPack.equals("technicssp")) {
-			File temp = new File(GameUpdater.modsDir, "industrialcraft-2-client_1.64.jar");
-			if (temp.exists()) temp.delete();
-		}
 
 		LauncherFrame launcher = new LauncherFrame();
 		launcher.setLoginForm(this);
