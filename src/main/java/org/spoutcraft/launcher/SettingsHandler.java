@@ -135,6 +135,7 @@ public class SettingsHandler {
 	}
 
 	public static void create(String resource, File out) {
+                @SuppressWarnings("rawtypes")
 		Class a = new Util().getClass();
 		InputStream is = a.getResourceAsStream(resource);
 		if (is != null) {

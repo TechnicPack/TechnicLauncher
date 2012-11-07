@@ -33,7 +33,8 @@ public class ModPackListYML {
 	private static final String									LOGO_PNG								= "logo.png";
 	private static final String									MODPACKS_YML						= "modpacks.yml";
 
-	private static final List<String>						RESOURCES								= new LinkedList();
+        @SuppressWarnings("unchecked")
+	private static final List<String>						RESOURCES								= new LinkedList<String>();
 	private static final File										MODPACKS_YML_FILE				= new File(GameUpdater.workDir, MODPACKS_YML);
 	private static final Object									key											= new Object();
 
@@ -103,7 +104,8 @@ public class ModPackListYML {
 			SettingsUtil.reload();
 		}
 	}
-
+        
+        @SuppressWarnings("unchecked")
 	private static Map<String, String> getModPacks() {
 		return (Map<String, String>) getConfig().getProperty("modpacks");
 	}

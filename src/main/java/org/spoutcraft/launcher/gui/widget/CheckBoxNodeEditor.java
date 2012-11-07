@@ -15,6 +15,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 
+@SuppressWarnings("serial")
 class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {
 
 	CheckBoxNodeRenderer	renderer		= new CheckBoxNodeRenderer();
