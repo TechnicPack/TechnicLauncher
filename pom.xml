@@ -11,7 +11,7 @@
 	<!-- Project information -->
 	<groupId>org.spoutcraft</groupId>
 	<artifactId>technic-launcher</artifactId>
-	<version>1.0.1.3</version>
+	<version>1.0.3.4</version>
 	<name>Technic Launcher</name>
 	<url>https://github.com/TechnicPack/Spoutcraft-Launcher</url>
 	<description></description>
@@ -42,14 +42,14 @@
 	<!-- Continuous integration -->
 	<ciManagement>
 		<system>jenkins</system>
-		<url>http://ci.getspout.org</url>
+		<url>http://build.spout.org/</url>
 	</ciManagement>
 
 	<!-- Repository locations -->
 	<repositories>
 		<repository>
 			<id>spout-repo</id>
-			<url>http://repo.getspout.org/content/repositories/snapshots</url>
+			<url>http://repo.spout.org</url>
 		</repository>
 	</repositories>
 
@@ -117,6 +117,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
 			</plugin>
 			<!-- JAR creation plugin -->
 			<plugin>

@@ -97,7 +97,7 @@ public class LoadingScreen extends JDialog {
 		setLocation(screenSize.width / 2 - (getWidth() / 2), screenSize.height / 2 - (getHeight() / 2));
 
 		// keep window on top of others
-		setAlwaysOnTop(true);
+		setAlwaysOnTop(false);
 	}
 
 	public void close() {

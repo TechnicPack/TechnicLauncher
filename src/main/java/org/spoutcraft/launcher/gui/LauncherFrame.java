@@ -19,15 +19,18 @@ package org.spoutcraft.launcher.gui;
 
 import java.applet.Applet;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.spoutcraft.launcher.Launcher;
-import org.spoutcraft.launcher.MinecraftAppletEnglober;
+
+import net.minecraft.Launcher;
+
+import org.spoutcraft.launcher.LauncherController;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.Util;
@@ -36,9 +39,9 @@ import org.spoutcraft.launcher.exception.MinecraftVerifyException;
 import org.spoutcraft.launcher.modpacks.ModPackListYML;
 import org.spoutcraft.launcher.modpacks.ModPackYML;
 
-public class LauncherFrame extends Frame implements WindowListener {
+public class LauncherFrame extends JFrame implements WindowListener {
 	private static final long				serialVersionUID	= 4524937541564722358L;
-	private MinecraftAppletEnglober	minecraft;
+	private Launcher	minecraft;
 	private LoginForm								loginForm					= null;
 
 	public static final int					RETRYING_LAUNCH		= -1;
@@ -47,6 +50,17 @@ public class LauncherFrame extends Frame implements WindowListener {
 
 	public LauncherFrame() {
 		super(ModPackListYML.currentModPackLabel);
+		if (System.getProperty("os.name").contains("OS X")) {
+			try
+			{
+				Class<?> fullScreenUtilityClass = Class.forName("com.apple.eawt.FullScreenUtilities");
+				java.lang.reflect.Method setWindowCanFullScreenMethod = fullScreenUtilityClass.getDeclaredMethod("setWindowCanFullScreen", new Class[] { Window.class, Boolean.TYPE });
+				setWindowCanFullScreenMethod.invoke(null, new Object[] { this, Boolean.valueOf(true) });
+			} catch (Exception e) {
+				// This is not a fatal exception, so just log it for brevity.
+				e.printStackTrace();
+			}
+		}
 		super.setVisible(true);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation((dim.width - 870) / 2, (dim.height - 518) / 2);
@@ -54,7 +68,7 @@ public class LauncherFrame extends Frame implements WindowListener {
 		this.setResizable(true);
 		this.addWindowListener(this);
 
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModPackYML.getModPackFavIcon()));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ModPackYML.getModPackIcon()));
 	}
 
 	public void setLoginForm(LoginForm form) {
@@ -68,25 +82,31 @@ public class LauncherFrame extends Frame implements WindowListener {
 	public int runGame(String user, String session, String downloadTicket, String mcpass) {
 		Applet applet = null;
 		try {
-			applet = Launcher.getMinecraftApplet();
+			applet = LauncherController.getMinecraftApplet();
 		} catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {
+			System.err.println("Exception thrown while initializing MineCraft.");
+			verify.printStackTrace();
 			OptionDialog.clearCache();
 			JOptionPane.showMessageDialog(getParent(), "The minecraft installation was corrupted. \nThe minecraft installation has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
 			this.setVisible(false);
 			this.dispose();
 			return ERROR_IN_LAUNCH;
+		} catch (Throwable t) {
+			System.err.println("Exception thrown while initializing MineCraft.");
+			t.printStackTrace();
+			applet = null;
 		}
 		if (applet == null) {
-			String message = "Failed to launch Launcher!";
+			String message = "Failed to start launcher, errors reported in the log.";
 			this.setVisible(false);
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.dispose();
 			return ERROR_IN_LAUNCH;
 		}
 
-		minecraft = new MinecraftAppletEnglober(applet);
+		minecraft = new Launcher(applet);
 
 		String launcherPath = String.format("%s/%s", PlatformUtils.LAUNCHER_DIR, ModPackListYML.currentModPack);
 
@@ -111,10 +131,18 @@ public class LauncherFrame extends Frame implements WindowListener {
 		this.add(minecraft);
 		validate();
 
-		minecraft.init();
-		minecraft.setSize(getWidth(), getHeight());
-
-		minecraft.start();
+		try {
+			minecraft.init();
+			minecraft.setSize(getWidth(), getHeight());
+			minecraft.start();
+		} catch (Throwable t) {
+			System.err.println("Exception thrown while initializing MineCraft.");
+			t.printStackTrace();
+			JOptionPane.showMessageDialog(getParent(), "Minecraft failed to start, errors reported in the log.");
+			this.setVisible(false);
+			this.dispose();
+			return ERROR_IN_LAUNCH;
+		}
 
 		this.setVisible(true);
 		return SUCCESSFUL_LAUNCH;

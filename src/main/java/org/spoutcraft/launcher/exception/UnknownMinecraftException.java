@@ -4,6 +4,7 @@ public class UnknownMinecraftException extends RuntimeException {
 	private final Throwable	cause;
 
 	public UnknownMinecraftException(Throwable ex) {
+		super(ex);
 		cause = ex;
 	}
 

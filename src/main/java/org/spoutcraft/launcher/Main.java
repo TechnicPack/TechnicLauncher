@@ -38,7 +38,7 @@ import com.beust.jcommander.JCommander;
 public class Main {
 
 	static String[]					args_temp;
-	public static String		build			= "1.0.1.1";
+	public static String		build			= "1.0.3.4";
 	public static String		currentPack;
 	static File							recursion;
 	public static LoginForm	loginForm;
@@ -159,6 +159,9 @@ public class Main {
 		}
 		PlatformUtils.getWorkingDirectory().mkdirs();
 		new File(PlatformUtils.getWorkingDirectory(), "launcher").mkdir();
+
+		System.setProperty("java.net.preferIPv4Stack" , "true");
+		System.setProperty("java.net.preferIPv6Stack" , "false");
 
 		SystemConsoleListener listener = new SystemConsoleListener();
 

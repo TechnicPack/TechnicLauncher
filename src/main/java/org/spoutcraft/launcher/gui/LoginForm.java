@@ -507,20 +507,24 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						String password = dis.readUTF();
 						if (!password.isEmpty()) {
 							i++;
+							String skinName = user;
+							if (dis.readBoolean())
+								skinName = dis.readUTF();
+
 							if (i == 1) {
 								// if (tumblerFeed != null) {
-								TumblerFeedParsingWorker.setUser(user);
+								TumblerFeedParsingWorker.setUser(skinName);
 								// }
 								if (!Main.isOffline) {
 									loginSkin1.setText(user);
 									loginSkin1.setVisible(true);
-									ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1Image);
+									ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + skinName + ".png", 103, 170, loginSkin1Image);
 								}
 							} else if (i == 2) {
 								if (!Main.isOffline) {
 									loginSkin2.setText(user);
 									loginSkin2.setVisible(true);
-									ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170, loginSkin2Image);
+									ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + skinName + ".png", 293, 170, loginSkin2Image);
 								}
 							}
 						}
@@ -559,6 +563,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				} else {
 					dos.writeUTF(info.password);
 				}
+				dos.writeBoolean(info.hasProfileName());
+				dos.writeUTF(info.getProfileName());
 			}
 			dos.close();
 		} catch (Exception e) {
@@ -737,6 +743,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			protected void done() {
 				if (values == null || values.length < 4) { return; }
 				LoginForm.pass = pass;
+				String profileName = values[2].toString();
 
 				MessageDigest digest = null;
 
@@ -750,7 +757,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				if (!cmdLine) {
 					String password = new String(passwordField.getPassword());
 					if (rememberCheckbox.isSelected()) {
-						usernames.put(gameUpdater.user, new UserPasswordInformation(password));
+						usernames.put(gameUpdater.user, new UserPasswordInformation(password, profileName));
 					} else {
 						if (digest == null) {
 							usernames.put(gameUpdater.user, new UserPasswordInformation(""));
@@ -961,7 +968,13 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		public boolean	isHash;
 		public byte[]		passwordHash	= null;
-		public String		password			= null;
+		public String		password		= null;
+		private String		profileName		= "";
+
+		public UserPasswordInformation(String pass, String profileName) {
+			this(pass);
+			this.setProfileName(profileName);
+		}
 
 		public UserPasswordInformation(String pass) {
 			isHash = false;
@@ -971,6 +984,27 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		public UserPasswordInformation(byte[] hash) {
 			isHash = true;
 			passwordHash = hash;
+		}
+
+		public Boolean hasProfileName() {
+			if (getProfileName().equals("")) {
+				return false;
+			}
+			return true;
+		}
+
+		/**
+		 * @return the profileName
+		 */
+		public String getProfileName() {
+			return profileName;
+		}
+
+		/**
+		 * @param profileName the profileName to set
+		 */
+		public void setProfileName(String profileName) {
+			this.profileName = profileName;
 		}
 	}
 }

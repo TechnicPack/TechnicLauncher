@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
@@ -114,6 +115,8 @@ public class ModPackUpdater extends GameUpdater {
 				Download download = DownloadUtils.downloadFile(url, downloadedFile.getPath(), filename, fileMD5, this);
 				return download.isSuccess();
 			}
+		} catch (MalformedURLException e) {
+			Util.log("Cannot download the mod '%s'. Does the exact filename exist on the mirror?", "mods/" + name + "/" + filename);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
