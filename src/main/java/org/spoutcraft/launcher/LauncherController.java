@@ -45,9 +45,39 @@ public class LauncherController {
 		File jinputJar = new File(mcBinFolder, "jinput.jar");
 		File lwglJar = new File(mcBinFolder, "lwjgl.jar");
 		File lwjgl_utilJar = new File(mcBinFolder, "lwjgl_util.jar");
+		File customJar = new File(mcBinFolder, "custom.jar");
 
 		ModpackBuild build = ModpackBuild.getSpoutcraftBuild();
 		Map<String, Object> libraries = build.getLibraries();
+		
+		if(!customJar.exists())
+		{
+			try
+			{
+				FileOutputStream stream = new FileOutputStream(customJar);
+				JarOutputStream out = new JarOutputStream(stream);
+				out.close();
+				stream.close();
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		if(!spoutcraftJar.exists())
+		{
+			try
+			{
+				FileOutputStream stream = new FileOutputStream(spoutcraftJar);
+				JarOutputStream out = new JarOutputStream(stream);
+				out.close();
+				stream.close();
+			}
+			catch(IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		int librarycount = 5;
 		if (libraries != null) {
@@ -66,7 +96,7 @@ public class LauncherController {
 			}
 		}
 
-		URL urls[] = new URL[5];
+		URL urls[] = new URL[6];
 
 		try {
 			// spoutcraftJar must be loaded first into classpath with FML 3.x+
@@ -80,8 +110,9 @@ public class LauncherController {
 			files[index + 3] = lwglJar;
 			urls[4] = lwjgl_utilJar.toURI().toURL();
 			files[index + 4] = lwjgl_utilJar;
+			urls[5] = customJar.toURI().toURL();
 
-			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar, files);
+			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar, customJar, files);
 
 			setMinecraftDirectory(classLoader, GameUpdater.modpackDir);
 			int a = 1;
