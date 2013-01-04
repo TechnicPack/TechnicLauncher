@@ -17,6 +17,7 @@ import org.yaml.snakeyaml.Yaml;
 public class YmlUtils {
 
 	public static boolean downloadMirrorsYmlFile(String mirrorYmlUrl) {
+		Main.isOffline = false;
 		return downloadYmlFile(mirrorYmlUrl, null, MirrorUtils.mirrorsYML);
 	}
 
