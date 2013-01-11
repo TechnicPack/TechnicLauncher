@@ -35,44 +35,43 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object> implem
 	@Override
 	protected Object doInBackground() {
 		URL url = null;
-		try {
-			url = new URL("http://mirror.technicpack.net/Technic/");
-
-			if (MirrorUtils.isAddressReachable(url.toString())) {
-				editorPane.setVisible(false);
-				editorPane.setContentType("text/html");
-				// editorPane.setEditable(false);
-				ToolTipManager.sharedInstance().registerComponent(editorPane);
-
-				editorPane.addHyperlinkListener(new HyperlinkListener() {
-					@Override
-					public void hyperlinkUpdate(HyperlinkEvent e) {
-						if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
-							try {
-								if (Desktop.isDesktopSupported()) {
-									Desktop.getDesktop().browse(e.getURL().toURI());
+		String mirrorUrl = MirrorUtils.getMirrorUrl("", "http://mirror.technicpack.net/Technic/");
+		if (mirrorUrl != null){
+			try {
+				url = new URL(mirrorUrl);
+					editorPane.setVisible(false);
+					editorPane.setContentType("text/html");
+					// editorPane.setEditable(false);
+					ToolTipManager.sharedInstance().registerComponent(editorPane);
+	
+					editorPane.addHyperlinkListener(new HyperlinkListener() {
+						@Override
+						public void hyperlinkUpdate(HyperlinkEvent e) {
+							if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
+								try {
+									if (Desktop.isDesktopSupported()) {
+										Desktop.getDesktop().browse(e.getURL().toURI());
+									}
+								} catch (IOException e1) {
+									e1.printStackTrace();
+								} catch (URISyntaxException e1) {
+									e1.printStackTrace();
 								}
-							} catch (IOException e1) {
-								e1.printStackTrace();
-							} catch (URISyntaxException e1) {
-								e1.printStackTrace();
 							}
 						}
-					}
-				});
-
-				editorPane.addPropertyChangeListener(this);
-				editorPane.setPage(url);
-			} else {
-				editorPane.setText("Oh Noes! Our Tumblr Feed is Down!");
+					});
+	
+					editorPane.addPropertyChangeListener(this);
+					editorPane.setPage(url);
+			} catch (MalformedURLException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				editorPane.setText("Oh Noes! Our Tumblr Server is Down!");
+				Util.log("Tumbler log @ '%' not avaliable.", url);
 			}
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			editorPane.setText("Oh Noes! Our Tumblr Server is Down!");
-			Util.log("Tumbler log @ '%' not avaliable.", url);
+		} else {
+			editorPane.setText("Oh Noes! Our Tumblr Feed is Down!");
 		}
-
 		return null;
 	}
 
