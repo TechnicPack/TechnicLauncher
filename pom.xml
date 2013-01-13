@@ -1,27 +1,22 @@
-<!--
-	Maven build file for Spoutcraft Launcher
-
-	Copyright (c) 2011 SpoutDev <http://www.getspout.org>
-	Spoutcraft Launcher is licensed under GNU LESSER GENERAL PUBLIC LICENSE Version 3
--->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- Project information -->
 	<groupId>org.spoutcraft</groupId>
 	<artifactId>technic-launcher</artifactId>
 	<version>1.1.0.0</version>
-	<name>Technic Launcher</name>
-	<url>https://github.com/TechnicPack/Spoutcraft-Launcher</url>
-	<description></description>
-
+	<packaging>jar</packaging>
 	<properties>
+		<buildNumber>0</buildNumber>
+		<mainClass>${project.groupId}.launcher.Main</mainClass>
+		<minimumJreVersion>1.6</minimumJreVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.mainClass>${project.groupId}.launcher.Main</project.mainClass>
-		<project.build.number>1</project.build.number>
-		<project.version.string>${release.version}.${build.number}</project.version.string>
 	</properties>
+
+	<name>Technic Launcher</name>
+	<description>A launcher for the Technic project.</description>
+	<url>https://github.com/TechnicPack/Spoutcraft-Launcher</url>
 
 	<!-- License -->
 	<licenses>
@@ -45,40 +40,32 @@
 		<url>http://build.spout.org/</url>
 	</ciManagement>
 
-	<!-- Repository locations -->
-	<repositories>
-		<repository>
-			<id>spout-repo</id>
-			<url>http://repo.spout.org</url>
-		</repository>
-	</repositories>
-
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.5</version>
+			<version>1.7</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.9</version>
+			<version>1.11</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
-			<version>1.20</version>
+			<version>1.30</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -89,31 +76,51 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-   
+
+	<!-- Repository locations -->
+	<repositories>
+		<repository>
+			<id>spout-repo</id>
+			<url>http://repo.spout.org</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<!-- Build plugin repositories -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spout-repo</id>
+			<url>http://repo.spout.org</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+
 	<build>
-		<defaultGoal>install</defaultGoal>
-		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<defaultGoal>clean install</defaultGoal>
 		<!-- Resources -->
 		<resources>
 			<resource>
-				<targetPath>.</targetPath>
+				<directory>${project.basedir}</directory>
 				<filtering>false</filtering>
-				<directory>${basedir}/src</directory>
+				<targetPath>.</targetPath>
 				<includes>
 					<include>LICENSE.txt</include>
 				</includes>
 			</resource>
 			<resource>
-				<targetPath>org/spoutcraft/launcher</targetPath>
+				<directory>${project.basedir}/src/main/resources</directory>
 				<filtering>false</filtering>
-				<directory>${basedir}/src/main/resources</directory>
+				<targetPath>org/spoutcraft/launcher</targetPath>
 				<includes>
 					<include>*</include>
 					<include>**/*</include>
 				</includes>
 				<excludes>
-					<exclude>Info.plist</exclude>
-					<exclude>JavaApplicationStub</exclude>
+					<exclude>app/*</exclude>
+					<exclude>exe/*</exclude>
 				</excludes>
 			</resource>
 		</resources>
@@ -123,25 +130,33 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.0</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${minimumJreVersion}</source>
+					<target>${minimumJreVersion}</target>
+					<compilerArgument>-Xlint:path</compilerArgument>
+					<otimization>true</otimization>
+					<showDeprecation>true</showDeprecation>
+					<showWarnings>true</showWarnings>
 				</configuration>
 			</plugin>
 			<!-- JAR creation plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.4</version>
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>${project.mainClass}</mainClass>
+							<mainClass>${mainClass}</mainClass>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
-                        <manifestEntries>
-                            <SplashScreen-Image>org/spoutcraft/launcher/splash.gif</SplashScreen-Image>
-                        </manifestEntries>
+						<manifestEntries>
+							<Implementation-Title>${project.version}</Implementation-Title>
+							<Implementation-Version>${buildNumber}</Implementation-Version>
+							<SplashScreen-Image>org/spoutcraft/launcher/splash.gif</SplashScreen-Image>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
@@ -149,24 +164,24 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.5</version>
+				<version>2.0</version>
 				<executions>
 					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
 						<configuration>
-						  <minimizeJar>true</minimizeJar>
+							<minimizeJar>true</minimizeJar>
 							<artifactSet>
 								<includes>
-									<include>commons-codec:commons-codec</include>
-									<include>org.yaml:snakeyaml</include>
 									<include>com.beust:jcommander</include>
+									<include>commons-codec:commons-codec</include>
 									<include>net.lingala.zip4j</include>
+									<include>org.yaml:snakeyaml</include>
 								</includes>
 							</artifactSet>
 						</configuration>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<phase>package</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -178,37 +193,34 @@
 		<!-- Windows -->
 		<profile>
 			<id>package-win</id>
-			<!--<activation>
+			<activation>
 				<os>
 					<family>windows</family>
 				</os>
-			</activation>-->
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
-						<artifactId>launch4j-plugin</artifactId>
-						<version>1.5.0.0</version>
+						<groupId>com.akathist.maven.plugins.launch4j</groupId>
+						<artifactId>launch4j-maven-plugin</artifactId>
+						<version>1.5.2</version>
 						<executions>
 							<execution>
 								<id>launch4j</id>
-								<phase>package</phase>
-								<goals>
-									<goal>launch4j</goal>
-								</goals>
 								<configuration>
 									<headerType>gui</headerType>
-  								<stayAlive>true</stayAlive>
+									<stayAlive>false</stayAlive>
+									<jar>${project.build.directory}/${project.artifactId}-${project.version}.jar</jar>
 									<outfile>${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
 									<classPath>
-										<mainClass>${project.mainClass}</mainClass>
+										<mainClass>${mainClass}</mainClass>
 										<addDependencies>false</addDependencies>
 										<preCp>anything</preCp>
 									</classPath>
 									<jre>
-										<minVersion>1.5.0</minVersion>
+										<minVersion>1.6.0</minVersion>
 									</jre>
-									<icon>${basedir}/src/main/resources/icon.ico</icon>
+									<icon>${basedir}/res/exe/icon.ico</icon>
 									<versionInfo>
 										<fileVersion>0.5.0.0</fileVersion>
 										<txtFileVersion>0.5.0.0</txtFileVersion>
@@ -221,6 +233,10 @@
 										<originalFilename>${project.artifactId}.exe</originalFilename>
 									</versionInfo>
 								</configuration>
+								<goals>
+									<goal>launch4j</goal>
+								</goals>
+								<phase>package</phase>
 							</execution>
 						</executions>
 					</plugin>
@@ -230,39 +246,49 @@
 		<!-- Mac OS X -->
 		<profile>
 			<id>package-mac</id>
-			<!--<activation>
+			<activation>
 				<os>
 					<family>mac</family>
 				</os>
-			</activation>-->
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>osxappbundle-maven-plugin</artifactId>
-						<version>1.0-alpha-1</version>
-						<configuration>
-							<mainClass>${project.mainClass}</mainClass>
-							<bundleName>${project.name}</bundleName>
-							<iconFile>${basedir}/src/main/resources/launcher_icon.icns</iconFile>
-							<dictionaryFile>src/main/resources/Info.plist</dictionaryFile>
-							<javaApplicationStub>${basedir}/src/main/resources/JavaApplicationStub</javaApplicationStub>
-							<additionalResources>
-								<fileSet>
-									<directory>${basedir}</directory>
-									<includes>
-										<include>LICENSE.txt</include>
-									</includes>
-								</fileSet>
-							</additionalResources>
-							<jvmVersion>1.5+</jvmVersion>
-						</configuration>
+						<groupId>org.spout</groupId>
+						<artifactId>osxapp-maven-plugin</artifactId>
+						<version>1.2-SNAPSHOT</version>
 						<executions>
 							<execution>
-								<phase>package</phase>
+								<configuration>
+									<mainClass>${mainClass}</mainClass>
+									<bundleName>${project.name}</bundleName>
+									<version>${project.version}</version>
+									<iconFile>${basedir}/src/main/resources/app/icon.icns</iconFile>
+									<dictionaryFile>${basedir}/src/main/resources/app/Info.plist.template</dictionaryFile>
+									<javaApplicationStub>${basedir}/src/main/resources/app/JavaApplicationStub</javaApplicationStub>
+									<zipFile>${project.build.directory}/${project.build.finalName}-app.zip</zipFile>
+									<internetEnable>true</internetEnable>
+									<jvmVersion>1.6+</jvmVersion>
+									<vmOptions>-Xms512M -Xmx1024M -Xdock:name="Technic Launcher" -Xdock:icon="icon.icns"</vmOptions>
+									<excludeArtifactIds>
+										<excludeArtifactId>commons-codec</excludeArtifactId>
+										<excludeArtifactId>jcommander</excludeArtifactId>
+										<excludeArtifactId>snakeyaml</excludeArtifactId>
+										<excludeArtifactId>zip4j</excludeArtifactId>
+									</excludeArtifactIds>
+									<additionalResources>
+										<fileSet>
+											<directory>${basedir}</directory>
+											<includes>
+												<include>LICENSE.txt</include>
+											</includes>
+										</fileSet>
+									</additionalResources>
+								</configuration>
 								<goals>
 									<goal>bundle</goal>
 								</goals>
+								<phase>package</phase>
 							</execution>
 						</executions>
 					</plugin>
@@ -270,5 +296,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>

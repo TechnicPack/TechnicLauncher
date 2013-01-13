@@ -1,0 +1,24 @@
+# Global line ending for text
+* text=auto
+
+# Files in this repo
+# These files are text and should be normalized (convert crlf => lf)
+.gitignore    text
+*.java        text diff=java
+*.md          text
+*.properties  text
+*.template    text
+*.txt         text
+*.xml         text
+*.yml         text
+
+# Images should be treated as binary
+# (binary is a macro for -text -diff)
+*.gif         binary
+*.icns        binary
+*.ico         binary
+*.png         binary
+
+# Other binaries
+*.key         binary
+JavaApplicationStub binary
