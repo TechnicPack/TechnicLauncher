@@ -125,7 +125,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Spoutcraft logo
 		JLabel logo = new JLabel();
 		logo.setBounds(8, 15, 400, 109);
-		setIcon(logo, "spoutcraft.png", logo.getWidth(), logo.getHeight());
+		setIcon(logo, "techniclauncher.png", logo.getWidth(), logo.getHeight());
 
 		// Progress Bar
 		progressBar = new LiteProgressBar();
@@ -145,7 +145,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			largerMinecraft = minecraft.deriveFont((float)20);
 		}
 
-		HyperlinkJLabel home = new HyperlinkJLabel("Home", "http://www.spout.org/");
+		HyperlinkJLabel home = new HyperlinkJLabel("Home", "http://www.technicpack.net");
 		home.setFont(largerMinecraft);
 		home.setBounds(545, 35, 65, 20);
 		home.setForeground(Color.WHITE);
@@ -154,7 +154,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		home.setHoverTransparency(1F);
 
 		// Forums link
-		HyperlinkJLabel forums = new HyperlinkJLabel("Forums", "http://forums.spout.org/");
+		HyperlinkJLabel forums = new HyperlinkJLabel("Forums", "http://forums.technicpack.net/");
 		forums.setFont(largerMinecraft);
 		forums.setBounds(625, 35, 90, 20);
 		forums.setForeground(Color.WHITE);
@@ -163,7 +163,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		forums.setHoverTransparency(1F);
 
 		// Issues link
-		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://spout.in/issues");
+		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://forums.technicpack.net/forums/bug-reports.81/");
 		issues.setFont(largerMinecraft);
 		issues.setBounds(733, 35, 85, 20);
 		issues.setForeground(Color.WHITE);
