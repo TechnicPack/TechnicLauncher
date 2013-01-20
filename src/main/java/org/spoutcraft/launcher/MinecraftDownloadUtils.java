@@ -41,7 +41,7 @@ public class MinecraftDownloadUtils {
           continue;
         }
 
-        if (!minecraftVersion.equals(requiredMinecraftVersion)) {
+        if (!minecraftVersion.equal(requiredMinecraftVersion)) {
           if (downloadMinecraftVersion(requiredMinecraftVersion, listener))
             return;
         } else {
@@ -86,7 +86,7 @@ public class MinecraftDownloadUtils {
         String resultMD5 = MD5Utils.getMD5(patchedMinecraft);
         Util.log("Comapring new jar md5 '%s' to stored md5 '%s'.", resultMD5, currentMinecraftMD5);
 
-        if (currentMinecraftMD5.equals(resultMD5)) {
+        if (currentMinecraftMD5.equalsIgnoreCase(resultMD5)) {
           GameUpdater.copy(patchedMinecraft, requiredFile);
           patchedMinecraft.delete();
           patch.deleteOnExit();
