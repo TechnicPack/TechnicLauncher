@@ -48,7 +48,7 @@ public class MinecraftLauncher {
 			File lwglJar = new File(mcBinFolder, "lwjgl.jar");
 			File lwjgl_utilJar = new File(mcBinFolder, "lwjgl_util.jar");
 
-			File[] files = new File[4 + libraries.size()];
+			File[] files = new File[5 + libraries.size()];
 
 			int index = 0;
 			for (Library lib : libraries) {
@@ -58,10 +58,11 @@ public class MinecraftLauncher {
 			}
 
 			try {
-				files[index + 0] = minecraftJar;
-				files[index + 1] = jinputJar;
-				files[index + 2] = lwglJar;
-				files[index + 3] = lwjgl_utilJar;
+				files[index + 0] = spoutcraftJar;
+				files[index + 1] = minecraftJar;
+				files[index + 2] = jinputJar;
+				files[index + 3] = lwglJar;
+				files[index + 4] = lwjgl_utilJar;
 
 				loader = new MinecraftClassLoader(ClassLoader.getSystemClassLoader(), spoutcraftJar, files);
 			}

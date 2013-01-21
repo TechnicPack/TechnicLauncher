@@ -159,7 +159,7 @@ public class SpoutcraftLauncher {
 
 		try {
 			new Launcher(updater, new GameLauncher(), frame);
-			String pack = "tekkit";
+			String pack = "tekkitlite";
 			String build = TechnicRestAPI.getLatestBuild(pack);
 			Modpack modpack = TechnicRestAPI.getModpack(pack, build);
 			updater.start(modpack);

@@ -24,7 +24,7 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.launch;
+package net.minecraft;
 
 import java.applet.Applet;
 import java.applet.AppletStub;
@@ -34,19 +34,19 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MinecraftAppletEnglober extends Applet implements AppletStub {
+public class Launcher extends Applet implements AppletStub {
 	private static final long serialVersionUID = -4815977474500388254L;
 	private Applet minecraftApplet;
 	private URL minecraftDocumentBase;
 	private Map<String, String> customParameters;
 	private boolean active = false;
 
-	public MinecraftAppletEnglober() throws HeadlessException {
+	public Launcher() throws HeadlessException {
 		this.customParameters = new HashMap<String, String>();
 		this.setLayout(new GridBagLayout());
 	}
 
-	public MinecraftAppletEnglober(Applet minecraftApplet) throws HeadlessException {
+	public Launcher(Applet minecraftApplet) throws HeadlessException {
 		this();
 		this.minecraftApplet = minecraftApplet;
 		java.awt.GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
@@ -93,6 +93,21 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 			this.customParameters.put(name, null);
 		}
 		return null;
+	}
+	
+	public void replace(Applet applet)
+	{
+		this.minecraftApplet = applet;
+		
+		applet.setStub(this);
+		applet.setSize(getWidth(), getHeight());
+		
+		this.setLayout(new BorderLayout());
+		this.add(applet, "Center");
+		applet.init();
+		active = true;
+		applet.start();
+		validate();
 	}
 
 	@Override

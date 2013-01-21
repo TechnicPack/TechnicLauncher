@@ -40,14 +40,13 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
-import org.spoutcraft.launcher.launch.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.Utils;
 
 public class GameLauncher extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 1L;
-	private MinecraftAppletEnglober minecraft;
+	private net.minecraft.Launcher minecraft;
 
 	public static final int RETRYING_LAUNCH = -1;
 	public static final int ERROR_IN_LAUNCH = 0;
@@ -100,7 +99,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 		StartupParameters params = Utils.getStartupParameters();
 
-		minecraft = new MinecraftAppletEnglober(applet);
+		minecraft = new net.minecraft.Launcher(applet);
 		minecraft.addParameter("username", user);
 		minecraft.addParameter("sessionid", session);
 		minecraft.addParameter("downloadticket", downloadTicket);
