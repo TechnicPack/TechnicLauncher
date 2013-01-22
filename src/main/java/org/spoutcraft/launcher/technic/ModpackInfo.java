@@ -51,11 +51,23 @@ public class ModpackInfo {
 	public String getImgURL() {
 		return TechnicRestAPI.getModpackImgURL(name);
 	}
+	
+	public String getBackgroundURL() {
+		return TechnicRestAPI.getModpackBackgroundURL(name);
+	}
 
 	public BufferedImage getImg() throws IOException {
 		BufferedImage image;
 		File temp = new File(Launcher.getGameUpdater().getTempDir(), "logo.png");
 		Download download = DownloadUtils.downloadFile(getImgURL(), temp.getAbsolutePath());
+		image = ImageIO.read(download.getOutFile());
+		return image;
+	}
+	
+	public BufferedImage getBackground() throws IOException {
+		BufferedImage image;
+		File temp = new File(Launcher.getGameUpdater().getTempDir(), "background.jpg");
+		Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
 		image = ImageIO.read(download.getOutFile());
 		return image;
 	}

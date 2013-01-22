@@ -1,5 +1,6 @@
 package org.spoutcraft.launcher.technic.skin;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class ModpackSelector extends JComponent {
 		// Label the pack by name
 		JLabel label = new JLabel(buttons.get(getIndex()).getModpackInfo().getDisplayName());
 		label.setFont(frame.getMinecraftFont(18));
+		label.setForeground(Color.white);
 		label.setBounds(bigX, bigY - 25, bigWidth, 20);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		this.add(label);
@@ -107,7 +109,8 @@ public class ModpackSelector extends JComponent {
 		selectPack(getIndex() - 1);
 	}
 
-	public String getSelectedPack() {
-		return buttons.get(index).getModpackInfo().getName();
+	public ModpackInfo getSelectedPack() {
+		return buttons.get(index).getModpackInfo();
 	}
+	
 }

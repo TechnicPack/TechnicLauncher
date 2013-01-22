@@ -150,6 +150,6 @@ public final class GameUpdater extends Directories {
 	}
 
 	public void runGame() {
-		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket);
+		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, this.modpack);
 	}
 }

@@ -55,7 +55,9 @@ import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
-import org.spoutcraft.launcher.skin.components.TransparentButton;
+import org.spoutcraft.launcher.skin.components.PackSwitcher;
+import org.spoutcraft.launcher.skin.components.TransparentJLabel;
+import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
@@ -68,6 +70,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private static final String OPTIONS_ACTION = "options";
+	private static final String PACKLEFT_ACTION = "packleft";
+	private static final String PACKRIGHT_ACTION = "packright";
 	private static final String LOGIN_ACTION = "login";
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private static final String REMOVE_USER = "remove";
@@ -76,16 +80,17 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private LitePasswordBox pass;
 	private LiteButton login;
 	private JCheckBox remember;
-	private TransparentButton options;
 	private LiteProgressBar progressBar;
 	private OptionsMenu optionsMenu = null;
 	private ModpackSelector packSelector;
+	private BackgroundImage packBackground;
 	public MetroLoginFrame() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - FRAME_WIDTH) / 2, (dim.height - FRAME_HEIGHT) / 2, FRAME_WIDTH, FRAME_HEIGHT);
 		setResizable(false);
-		getContentPane().add(new BackgroundImage(FRAME_WIDTH, FRAME_HEIGHT));
+		packBackground = new BackgroundImage(FRAME_WIDTH, FRAME_HEIGHT);
+		getContentPane().add(packBackground);
 	}
 
 	private void initComponents() {
@@ -99,19 +104,19 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(622 + xShift, 426 + yShift, 140, 24);
+		name.setBounds(602 + xShift, 379 + yShift, 140, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(622 + xShift, 455 + yShift, 140, 24);
+		pass.setBounds(602 + xShift, 408 + yShift, 140, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
 
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(775 + xShift, 455 + yShift, 110, 24);
+		remember.setBounds(755 + xShift, 408 + yShift, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setBorderPainted(false);
@@ -122,7 +127,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup login button
 		login = new LiteButton("Login");
-		login.setBounds(775 + xShift, 426 + yShift, 92, 24);
+		login.setBounds(755 + xShift, 379 + yShift, 92, 24);
 		login.setFont(minecraft);
 		login.setActionCommand(LOGIN_ACTION);
 		login.addActionListener(this);
@@ -130,8 +135,34 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Technic logo
 		JLabel logo = new JLabel();
-		logo.setBounds(8, 15, 400, 109);
+		logo.setBounds(FRAME_WIDTH / 2 - 200, 15, 400, 109);
 		setIcon(logo, "techniclauncher.png", logo.getWidth(), logo.getHeight());
+		
+		// Pack Selector Background
+		JLabel selectorBackground = new JLabel();
+		selectorBackground.setBounds(0, FRAME_HEIGHT / 2 - 100, FRAME_WIDTH, 168);
+		setIcon(selectorBackground, "selectorBackground.png", selectorBackground.getWidth(), selectorBackground.getHeight());
+		
+		// Pack Select Left
+		PackSwitcher switchLeft = new PackSwitcher();
+		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 100, 22, 168);
+		switchLeft.setActionCommand(PACKLEFT_ACTION);
+		switchLeft.addActionListener(this);
+		setIcon(switchLeft, "selectLeft.png", switchLeft.getWidth(), switchLeft.getHeight());
+		
+		// Pack Select Right
+		PackSwitcher switchRight = new PackSwitcher();
+		switchRight.setBounds(FRAME_WIDTH - 28, FRAME_HEIGHT / 2 - 100, 22, 168);
+		switchRight.setActionCommand(PACKRIGHT_ACTION);
+		switchRight.addActionListener(this);
+		setIcon(switchRight, "selectRight.png", switchRight.getWidth(), switchRight.getHeight());
+		
+		// Login Strip
+		TransparentJLabel loginStrip = new TransparentJLabel();
+		loginStrip.setBounds(0, FRAME_HEIGHT - 107 - 60, FRAME_WIDTH, 107);
+		loginStrip.setTransparency(0.95F);
+		loginStrip.setHoverTransparency(0.95F);
+		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
 
 		// Progress Bar
 		progressBar = new LiteProgressBar();
@@ -192,30 +223,28 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		issues.setHoverTransparency(1F);
 
 		// Options Button
-		options = new TransparentButton();
+		JButton options = new JButton();
 		options.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(gearIcon)));
-		options.setBounds(pass.getX() - 45, pass.getY() - 5, 30, 30);
-		options.setTransparency(0.70F);
-		options.setHoverTransparency(1F);
+		options.setBounds(FRAME_WIDTH - 40, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
 
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://steamcommunity.com/groups/technic-pack");
 		steam.setToolTipText("Game with us on Steam");
-		steam.setBounds(6, FRAME_HEIGHT - 62 + yShift, 28, 28);
+		steam.setBounds(6, 6 + yShift, 28, 28);
 		setIcon(steam, "steam.png", 28);
 
 		// Twitter button
 		JButton twitter = new ImageHyperlinkButton("https://twitter.com/TechnicPack");
 		twitter.setToolTipText("Follow us on Twitter");
-		twitter.setBounds(6 + 34 * 3 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
+		twitter.setBounds(6 + 34 * 3 + xShift, 6 + yShift, 28, 28);
 		setIcon(twitter, "twitter.png", 28);
 
 		// Facebook button
 		JButton facebook = new ImageHyperlinkButton("https://www.facebook.com/TechnicPack");
 		facebook.setToolTipText("Like us on Facebook");
-		facebook.setBounds(6 + 34 * 2 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
+		facebook.setBounds(6 + 34 * 2 + xShift, 6 + yShift, 28, 28);
 		setIcon(facebook, "facebook.png", 28);
 
 		// Google+ button
@@ -229,7 +258,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// YouTube button
 		JButton youtube = new ImageHyperlinkButton("http://www.youtube.com/user/kakermix");
 		youtube.setToolTipText("Subscribe to our videos");
-		youtube.setBounds(6 + 34 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
+		youtube.setBounds(6 + 34 + xShift, 6 + yShift, 28, 28);
 		setIcon(youtube, "youtube.png", 28);
 
 		Container contentPane = getContentPane();
@@ -259,7 +288,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			removeButtons.put(userButton.getRemoveIcon(), userButton);
 		}
 
+		contentPane.add(switchLeft);
+		contentPane.add(switchRight);
 		contentPane.add(packSelector);
+		contentPane.add(selectorBackground);
 		contentPane.add(name);
 		contentPane.add(pass);
 		contentPane.add(remember);
@@ -270,13 +302,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		//contentPane.add(gplus);
 		contentPane.add(youtube);
 		//contentPane.add(home);
-		contentPane.add(forums);
-		contentPane.add(donate);
+		//contentPane.add(forums);
+		//contentPane.add(donate);
 		//contentPane.add(issues);
 		contentPane.add(logo);
+		contentPane.add(loginStrip);
 		contentPane.add(options);
 		contentPane.add(progressBar);
-
+		
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
 
@@ -340,8 +373,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				optionsMenu.setModal(true);
 				optionsMenu.setVisible(true);
 			}
+		} else if (action.equals(PACKLEFT_ACTION)) {
+			getModpackSelector().selectPreviousPack();
+			packBackground.setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
+		} else if (action.equals(PACKRIGHT_ACTION)) {
+			getModpackSelector().selectNextPack();
+			packBackground.setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
 		} else if (action.equals(LOGIN_ACTION)) {
-			String modpack = getModpackSelector().getSelectedPack();
+			String modpack = getModpackSelector().getSelectedPack().getName();
 			String build;
 			try {
 				build = TechnicRestAPI.getRecommendedBuild(modpack);
@@ -410,6 +449,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	@Override
 	public String getSelectedUser() {
 		return this.name.getText();
+	}
+	
+	private Image newBackgroundImage(ModpackInfo modpack) {
+		try {
+			Image image = modpack.getBackground().getScaledInstance(FRAME_WIDTH, FRAME_HEIGHT, Image.SCALE_SMOOTH);
+			return image;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	// Emulates tab focus policy of name -> pass -> remember -> login

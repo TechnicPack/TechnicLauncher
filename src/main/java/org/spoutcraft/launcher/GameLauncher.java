@@ -42,6 +42,7 @@ import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
+import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.Utils;
 
 public class GameLauncher extends JFrame implements WindowListener {
@@ -60,7 +61,10 @@ public class GameLauncher extends JFrame implements WindowListener {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
 	}
 
-	public void runGame(String user, String session, String downloadTicket) {
+	public void runGame(String user, String session, String downloadTicket, Modpack modpack) {
+		if (modpack != null) {
+			this.setTitle(modpack.getName());
+		}
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
 		Point centeredLoc = WindowMode.getModeById(Settings.getWindowModeId()).getCenteredLocation(Launcher.getLoginFrame());
 

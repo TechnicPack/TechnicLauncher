@@ -47,6 +47,10 @@ public class TechnicRestAPI {
 	public static String getModpackImgURL(String modpack) {
 		return MIRROR_URL + modpack + "/resources/logo_180.png";
 	}
+	
+	public static String getModpackBackgroundURL(String modpack) {
+		return MIRROR_URL + modpack + "/resources/background.jpg";
+	}
 
 	public static List<ModpackInfo> getModpacks() throws RestfulAPIException {
 		InputStream stream = null;
