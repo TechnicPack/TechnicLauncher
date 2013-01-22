@@ -330,7 +330,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				} else {
 					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to connect to minecraft.net", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
-						//Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "");
+						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "");
 					} else {
 						enableForm();
 					}

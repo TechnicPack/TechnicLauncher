@@ -60,6 +60,10 @@ public class GameLauncher extends JFrame implements WindowListener {
 		this.addWindowListener(this);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
 	}
+	
+	public void runGame(String user, String session, String downloadTicket) {
+		runGame(user, session, downloadTicket, null);
+	}
 
 	public void runGame(String user, String session, String downloadTicket, Modpack modpack) {
 		if (modpack != null) {

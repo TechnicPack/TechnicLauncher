@@ -47,6 +47,8 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
+
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -158,6 +160,8 @@ public class SpoutcraftLauncher {
 		try {
 			new Launcher(updater, new GameLauncher(), frame);
 			frame.getModpackSelector().setupModpackButtons();
+			frame.setBackgroundImage(frame.getBackgroundImage());
+			frame.updateFrameTitle();
 			String pack = "tekkitlite";
 			String build = TechnicRestAPI.getLatestBuild(pack);
 			Modpack modpack = TechnicRestAPI.getModpack(pack, build);
