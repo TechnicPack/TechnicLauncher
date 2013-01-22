@@ -91,6 +91,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		setResizable(false);
 		packBackground = new BackgroundImage(FRAME_WIDTH, FRAME_HEIGHT);
 		getContentPane().add(packBackground);
+		this.setTitle("Test");
 	}
 
 	private void initComponents() {
@@ -310,11 +311,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(options);
 		contentPane.add(progressBar);
 		
+		
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
 
 	public ModpackSelector getModpackSelector() {
 		return packSelector;
+	}
+	
+	public BackgroundImage getBackgroundImage() {
+		return packBackground;
 	}
 
 	private void setIcon(JButton button, String iconName, int size) {
@@ -375,10 +381,12 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(PACKLEFT_ACTION)) {
 			getModpackSelector().selectPreviousPack();
-			packBackground.setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
+			this.setTitle(packSelector.getSelectedPack().getDisplayName());
+			setBackgroundImage(packBackground);
 		} else if (action.equals(PACKRIGHT_ACTION)) {
 			getModpackSelector().selectNextPack();
-			packBackground.setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
+			this.setTitle(packSelector.getSelectedPack().getDisplayName());
+			setBackgroundImage(packBackground);
 		} else if (action.equals(LOGIN_ACTION)) {
 			String modpack = getModpackSelector().getSelectedPack().getName();
 			String build;
@@ -451,7 +459,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return this.name.getText();
 	}
 	
-	private Image newBackgroundImage(ModpackInfo modpack) {
+	public void setBackgroundImage(BackgroundImage packBackground) {
+		packBackground.setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
+	}
+	
+	public Image newBackgroundImage(ModpackInfo modpack) {
 		try {
 			Image image = modpack.getBackground().getScaledInstance(FRAME_WIDTH, FRAME_HEIGHT, Image.SCALE_SMOOTH);
 			return image;
