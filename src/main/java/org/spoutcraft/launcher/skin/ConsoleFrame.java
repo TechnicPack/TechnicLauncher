@@ -126,7 +126,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	 * @param killProcess true to kill the process on console close
 	 */
 	public ConsoleFrame(int numLines, boolean colorEnabled, final Process trackProc, final boolean killProcess) {
-		super("Spoutcraft Console");
+		super("Technic Launcher Console");
 		this.numLines = numLines;
 		this.colorEnabled = colorEnabled;
 		this.trackProc = trackProc;

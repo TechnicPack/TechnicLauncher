@@ -103,7 +103,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 			return;
 		}
 		if (applet == null) {
-			String message = "Failed to launch Spoutcraft!";
+			String message = "Failed to launch mod pack!";
 			this.setVisible(false);
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.dispose();
@@ -179,7 +179,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) { }
 		}
-		System.out.println("Exiting Spoutcraft");
+		System.out.println("Exiting mod pack");
 		this.dispose();
 		System.exit(0);
 	}

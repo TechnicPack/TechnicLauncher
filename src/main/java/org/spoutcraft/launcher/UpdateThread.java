@@ -307,13 +307,13 @@ public class UpdateThread extends Thread {
 		int steps = libraries.size() + 2;
 		float progress = 100F;
 
-		stateChanged("Checking for Spoutcraft update...", progress / steps);
+		stateChanged("Checking for mod pack update...", progress / steps);
 		progress += 100F;
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "modpack.jar");
 		if (!spoutcraft.exists() || !build.getMD5().equalsIgnoreCase(MD5Utils.getMD5(spoutcraft))) {
 			return true;
 		}
-		stateChanged("Checking for Spoutcraft update...", progress / steps);
+		stateChanged("Checking for mod pack update...", progress / steps);
 		progress += 100F;
 		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
 		libDir.mkdir();
@@ -323,7 +323,7 @@ public class UpdateThread extends Thread {
 			if (!libraryFile.exists()) {
 				return true;
 			}
-			stateChanged("Checking for Spoutcraft update...", progress / steps);
+			stateChanged("Checking for mod pack update...", progress / steps);
 			progress += 100F;
 		}
 
@@ -410,7 +410,7 @@ public class UpdateThread extends Thread {
 		String lwjgl_utilMD5 = FileType.LWJGL_UTIL.getMD5();
 
 		// Processs minecraft.jar
-		logger.info("Spoutcraft Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
+		logger.info("Mod pack Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
 		File mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			String output = Launcher.getGameUpdater().getTempDir() + File.separator + "minecraft.jar";

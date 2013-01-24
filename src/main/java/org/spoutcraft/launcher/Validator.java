@@ -165,7 +165,7 @@ public class Validator{
 	private boolean compareSpoutcraftMD5s(SpoutcraftData build, File file) {
 		String expected = build.getMD5();
 		String actual = MD5Utils.getMD5(file);
-		debug("Checking MD5 of Spoutcraft. Expected MD5: " + expected + " | Actual MD5: " + actual);
+		debug("Checking MD5 of mod pack. Expected MD5: " + expected + " | Actual MD5: " + actual);
 		if (expected == null || actual == null) {
 			return false;
 		}

@@ -78,7 +78,7 @@ public final class StartupParameters {
 	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables the MD5 checking of required files")
 	private boolean ignoreMD5 = false;
 
-	@Parameter(names = {"-build"}, description = "Uses a specific Spoutcraft build")
+	@Parameter(names = {"-build"}, description = "Uses a specific mod pack build")
 	private int build = -1;
 
 	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
@@ -127,7 +127,7 @@ public final class StartupParameters {
 			log.info("No MD5 Mode activated");
 		}
 		if (build != -1) {
-			log.info("Spoutcraft build selected: " + build);
+			log.info("Mod pack build selected: " + build);
 		}
 		if (relaunched) {
 			log.info("Relaunched with correct memory");
