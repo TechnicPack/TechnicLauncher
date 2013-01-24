@@ -69,6 +69,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private static final String OPTIONS_ACTION = "options";
+	private static final String EXIT_ACTION = "exit";
 	private static final String PACKLEFT_ACTION = "packleft";
 	private static final String PACKRIGHT_ACTION = "packright";
 	private static final String LOGIN_ACTION = "login";
@@ -90,6 +91,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		setResizable(false);
 		packBackground = new BackgroundImage(FRAME_WIDTH, FRAME_HEIGHT);
 		getContentPane().add(packBackground);
+		this.setUndecorated(true);
 	}
 
 	private void initComponents() {
@@ -150,7 +152,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		// Pack Select Right
 		ImageButton switchRight = new ImageButton(getIcon("selectRight.png", 22, 168), getIcon("selectRightInverted.png", 22, 168));
-		switchRight.setBounds(FRAME_WIDTH - 28, FRAME_HEIGHT / 2 - 100, 22, 168);
+		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 100, 22, 168);
 		switchRight.setActionCommand(PACKRIGHT_ACTION);
 		switchRight.addActionListener(this);
 		
@@ -221,10 +223,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Options Button
 		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
-		options.setBounds(FRAME_WIDTH - 40, 6, 28, 28);
+		options.setBounds(FRAME_WIDTH - 34 * 2, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
 		options.addKeyListener(this);
+		
+		// Exit Button
+		ImageButton exit = new ImageButton(getIcon("quit.png", 28, 28), getIcon("quit.png", 28, 28));
+		exit.setBounds(FRAME_WIDTH - 34, 6, 28, 28);
+		exit.setActionCommand(EXIT_ACTION);
+		exit.addActionListener(this);
 
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://steamcommunity.com/groups/technic-pack");
@@ -305,6 +313,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(logo);
 		contentPane.add(loginStrip);
 		contentPane.add(options);
+		contentPane.add(exit);
 		contentPane.add(progressBar);
 		
 		
@@ -383,6 +392,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				optionsMenu.setModal(true);
 				optionsMenu.setVisible(true);
 			}
+		} else if (action.equals(EXIT_ACTION)) {
+			System.exit(0);
 		} else if (action.equals(PACKLEFT_ACTION)) {
 			getModpackSelector().selectPreviousPack();
 			updateFrameTitle();
