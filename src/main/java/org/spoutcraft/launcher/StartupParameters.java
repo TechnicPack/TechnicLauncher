@@ -121,7 +121,7 @@ public final class StartupParameters {
 			log.info("Proxy User exists");
 		}
 		if (proxyPassword != null) {
-			log.info("Porxy Password exists");
+			log.info("Proxy Password exists");
 		}
 		if (ignoreMD5) {
 			log.info("No MD5 Mode activated");

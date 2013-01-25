@@ -240,7 +240,7 @@ public class UpdateThread extends Thread {
 					continue;
 				}
 
-				if (!log.getName().startsWith("spoutcraft")) {
+				if (!log.getName().startsWith("techniclauncher")) {
 					log.delete();
 					continue;
 				}
