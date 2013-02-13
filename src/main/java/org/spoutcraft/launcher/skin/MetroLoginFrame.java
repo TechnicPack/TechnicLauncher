@@ -208,12 +208,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
 		forums.setToolTipText("Visit the forums");
 		forums.setBounds(10, loginStrip.getY() + 7, 90, 90);
+		forums.setBorderPainted(false);
 		setIcon(forums, "forums.png", forums.getWidth(), forums.getHeight());
 		
 		// Donate link
 		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
 		donate.setToolTipText("Donate to the modders");
 		donate.setBounds(forums.getX() + 100,  forums.getY(), 90, 90);
+		donate.setBorderPainted(false);
 		setIcon(donate, "donate.png", forums.getWidth(), forums.getHeight());
 
 		// Issues link
