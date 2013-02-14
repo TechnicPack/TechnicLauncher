@@ -31,6 +31,7 @@ import java.applet.Applet;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -46,6 +47,7 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.technic.PackInfo;
+import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
 public class GameLauncher extends JFrame implements WindowListener {
@@ -82,6 +84,17 @@ public class GameLauncher extends JFrame implements WindowListener {
 			File icon = new File(Utils.getAssetsDirectory(), pack.getName() + File.separator + "icon.png");
 			if (icon.exists()) {
 				this.setIconImage(Toolkit.getDefaultToolkit().createImage(icon.getAbsolutePath()));
+			}
+		}
+		if (OperatingSystem.getOS().isMac()) {
+			try
+			{
+				Class<?> fullScreenUtilityClass = Class.forName("com.apple.eawt.FullScreenUtilities");
+				java.lang.reflect.Method setWindowCanFullScreenMethod = fullScreenUtilityClass.getDeclaredMethod("setWindowCanFullScreen", new Class[] { Window.class, Boolean.TYPE });
+				setWindowCanFullScreenMethod.invoke(null, new Object[] { this, Boolean.valueOf(true) });
+			} catch (Exception e) {
+				// This is not a fatal exception, so just log it for brevity.
+				e.printStackTrace();
 			}
 		}
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
