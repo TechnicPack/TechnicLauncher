@@ -373,7 +373,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	public void setUser(String name) {
 		if (name != null) {
-			DynamicButton user = userButtons.get(name);
+			DynamicButton user = userButtons.get(this.getUsername(name));
 			if (user != null) {
 				user.doClick();
 			}
