@@ -36,16 +36,20 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -70,6 +74,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	private static final String PASTE_URL = "paste";
 	private static final int FRAME_WIDTH = 520;
 	private static final int FRAME_HEIGHT = 222;
+	private static final String CLOSEDIALOG_KEY = "ESCAPE";
 	private JLabel msgLabel;
 	private JLabel background;
 	private LiteButton save;
@@ -96,6 +101,16 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	public void initComponents() {
 		Font minecraft = MetroLoginFrame.getMinecraftFont(12);
 		
+		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		Action escapeAction = new AbstractAction()
+		{ public void actionPerformed(ActionEvent e)
+			{
+				dispose();
+			}
+		};
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, CLOSEDIALOG_KEY);
+		getRootPane().getActionMap().put(CLOSEDIALOG_KEY, escapeAction);
+
 		background = new JLabel();
 		background.setBounds(0,0, FRAME_WIDTH, FRAME_HEIGHT);
 		MetroLoginFrame.setIcon(background, "platformBackground.png", background.getWidth(), background.getHeight());
