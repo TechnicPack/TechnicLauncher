@@ -90,7 +90,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	private String url = "";
 	private Document urlDoc;
 	private File installDir;
-  private LiteTextBox urlTextBox;
+	private LiteTextBox urlTextBox;
 	
 	public ImportOptions() {
 		setTitle("Add a Pack");
@@ -251,62 +251,62 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				msgLabel.setText("Enter your Technic Platform delivery URL below to add a new pack:");
 				enableComponent(save, false);
 				enableComponent(folder, false);
-        enableComponent(install, false);
+				enableComponent(install, false);
 				info = null;
 				this.url = "";
 				return;
 			} else if (matchUrl(url)) {
-			  msgLabel.setText("Attempting to fetch Modpack info...");
-			  //Turn everything off while the data is being fetched
-			  enableComponent(urlTextBox, false);
-			  enableComponent(paste, false);
-			  enableComponent(install, false);
-        enableComponent(folder, false);
-        enableComponent(save, false);
-			  //fetch the info asynchronously
-			  SwingWorker<CustomInfo, Void> worker = new SwingWorker<CustomInfo, Void>() {
-
-          @Override
-          protected CustomInfo doInBackground() throws Exception {
-            CustomInfo result = RestAPI.getCustomModpack(url);
-            return result;
-          }
-			    
-          public void done() {
-            try {
-              info = get();
-              msgLabel.setText("Modpack: " + info.getDisplayName());
-              ImportOptions.this.url = url;
-              enableComponent(folder, true);
-              enableComponent(install, true);
-              if (info.isForceDir()) {
-                install.setText("Please select an install directory");
-                folder.setText("Select");
-                folder.setLocation(FRAME_WIDTH - 145, FRAME_HEIGHT - 40);
-                enableComponent(save, false);
-              } else {
-                installDir = new File(Utils.getLauncherDirectory(), info.getName());
-                install.setText("Location: " + installDir.getPath());
-                enableComponent(save, true);
-              }
-            } catch (ExecutionException e) {
-              msgLabel.setText("Error parsing platform response");
-              enableComponent(save, false);
-              enableComponent(folder, false);
-              enableComponent(install, false);
-              info = null;
-              ImportOptions.this.url = "";
-              e.printStackTrace();
-            } catch (InterruptedException e) {
-              //TODO Interrupted exception?
-              e.printStackTrace();
-            } finally {
-              //always turn these back on
-              enableComponent(urlTextBox, true);
-              enableComponent(paste, true);
-            }
-          }
-			  };
+				msgLabel.setText("Attempting to fetch Modpack info...");
+				// Turn everything off while the data is being fetched
+				enableComponent(urlTextBox, false);
+				enableComponent(paste, false);
+				enableComponent(install, false);
+				enableComponent(folder, false);
+				enableComponent(save, false);
+				// fetch the info asynchronously
+				SwingWorker<CustomInfo, Void> worker = new SwingWorker<CustomInfo, Void>() {
+					
+					@Override
+					protected CustomInfo doInBackground() throws Exception {
+						CustomInfo result = RestAPI.getCustomModpack(url);
+						return result;
+					}
+					
+					public void done() {
+						try {
+							info = get();
+							msgLabel.setText("Modpack: " + info.getDisplayName());
+							ImportOptions.this.url = url;
+							enableComponent(folder, true);
+							enableComponent(install, true);
+							if (info.isForceDir()) {
+								install.setText("Please select an install directory");
+								folder.setText("Select");
+								folder.setLocation(FRAME_WIDTH - 145, FRAME_HEIGHT - 40);
+								enableComponent(save, false);
+							} else {
+								installDir = new File(Utils.getLauncherDirectory(), info.getName());
+								install.setText("Location: " + installDir.getPath());
+								enableComponent(save, true);
+							}
+						} catch (ExecutionException e) {
+							msgLabel.setText("Error parsing platform response");
+							enableComponent(save, false);
+							enableComponent(folder, false);
+							enableComponent(install, false);
+							info = null;
+							ImportOptions.this.url = "";
+							e.printStackTrace();
+						} catch (InterruptedException e) {
+							// TODO Interrupted exception?
+							e.printStackTrace();
+						} finally {
+							// always turn these back on
+							enableComponent(urlTextBox, true);
+							enableComponent(paste, true);
+						}
+					}
+				};
 				worker.execute();
 			} else {
 				msgLabel.setText("Invalid Technic Platform delivery URL");
@@ -382,7 +382,6 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	public void changedUpdate(DocumentEvent e) {
 		urlUpdated(e.getDocument());
 	}
-	
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
