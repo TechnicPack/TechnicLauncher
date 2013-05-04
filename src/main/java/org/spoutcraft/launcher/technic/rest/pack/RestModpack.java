@@ -43,6 +43,10 @@ public class RestModpack extends Modpack {
 	private String libraries;
 	@JsonProperty("minecraft")
 	private String minecraftVersion;
+	@JsonProperty("minecraft_md5")
+	private String minecraftMd5;
+	@JsonProperty("use_patch")
+	boolean usePatch;
 	@JsonProperty("forge")
 	private String forgeVersion;
 	@JsonProperty("mods")
@@ -83,6 +87,11 @@ public class RestModpack extends Modpack {
 	@Override
 	public String getMinecraftVersion() {
 		return minecraftVersion;
+	}
+
+	@Override
+	public String getMinecraftMd5() {
+		return minecraftMd5;
 	}
 
 	public String getForgeVersion() {

@@ -57,6 +57,10 @@ public class CustomInfo extends PackInfo {
 	private String mirrorUrl;
 	@JsonProperty("minecraft")
 	private String minecraftVersion;
+	@JsonProperty("minecraft_md5")
+	private String minecraftMd5;
+	@JsonProperty("use_patch")
+	boolean usePatch;
 	@JsonProperty("logo_md5")
 	private String logoMD5;
 	@JsonProperty("background_md5")
@@ -131,6 +135,7 @@ public class CustomInfo extends PackInfo {
 		return new CustomModpack(this);
 	}
 
+	@Override
 	public boolean isForceDir() {
 		return forceDir;
 	}
@@ -141,6 +146,10 @@ public class CustomInfo extends PackInfo {
 
 	public String getMinecraftVersion() {
 		return minecraftVersion;
+	}
+
+	public String getMinecraftMd5() {
+		return minecraftMd5;
 	}
 
 	public String getUser() {
@@ -159,17 +168,12 @@ public class CustomInfo extends PackInfo {
 		return mirrorUrl;
 	}
 
-	public PackInfo getPack() {
-		try {
-			if (this.hasMirror()) {
-				RestAPI rest = new RestAPI(getMirrorURL());
-				RestInfo restInfo = rest.getModpackInfo(getName());
-				return restInfo;
-			} else {
-				return this;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	public PackInfo getPack() throws IOException {
+		if (this.hasMirror()) {
+			RestAPI rest = new RestAPI(getMirrorURL());
+			RestInfo restInfo = rest.getModpackInfo(getName());
+			return restInfo;
+		} else {
 			return this;
 		}
 	}

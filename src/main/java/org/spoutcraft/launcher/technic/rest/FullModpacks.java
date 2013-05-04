@@ -24,47 +24,34 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic.rest.pack;
+package org.spoutcraft.launcher.technic.rest;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.technic.rest.Mod;
-import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.spoutcraft.launcher.technic.RestInfo;
 
-public class OfflineModpack extends Modpack {
-	private final String name;
-	private final String build;
+public class FullModpacks extends RestObject {
+	@JsonProperty("modpacks")
+	private Map<String, RestInfo> modpacks;
+	@JsonProperty("mirror_url")
+	private String mirrorURL;
 
-	public OfflineModpack(String name, String build) {
-		this.name = name;
-		this.build = build;
+	public Collection<RestInfo> getModpacks() {
+		return modpacks.values();
+	}
+
+	public String getMirrorURL() {
+		return mirrorURL;
 	}
 
 	@Override
-	public String getMinecraftVersion() {
-		return Settings.getInstalledMC(name);
+	public String toString() {
+		return "{ Full Modpacks [modpacks: " + modpacks + "] }";
 	}
 
-	@Override
-	public String getMinecraftMd5() {
-		return null;
+	public Map<String, RestInfo> getMap() {
+		return modpacks;
 	}
-
-	@Override
-	public String getBuild() {
-		return build;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public List<Mod> getMods() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

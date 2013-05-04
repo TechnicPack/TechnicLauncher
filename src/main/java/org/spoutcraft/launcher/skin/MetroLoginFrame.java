@@ -27,7 +27,14 @@
 
 package org.spoutcraft.launcher.skin;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FocusTraversalPolicy;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -42,7 +49,15 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import net.minecraft.Launcher;
 
@@ -55,6 +70,7 @@ import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
+import org.spoutcraft.launcher.skin.components.NewsComponent;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.RestInfo;
@@ -83,7 +99,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final String LOGIN_ACTION = "login";
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private static final String REMOVE_USER = "remove";
-	private static final Color TRANSPARENT = new Color(45, 45, 45, 160);
+	public static final Color TRANSPARENT = new Color(45, 45, 45, 160);
 	private static final int SPACING = 7;
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private final Map<String, DynamicButton> userButtons = new HashMap<String, DynamicButton>();
@@ -102,6 +118,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private JLabel packShadow;
 	private JLabel customName;
 	private RoundedBox barBox;
+	private NewsComponent news;
 	private long previous = 0L;
 
 	public MetroLoginFrame() {
@@ -160,7 +177,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Technic logo
 		JLabel logo = new JLabel();
-		logo.setBounds(590, -10, 296, 125);
+		logo.setBounds(602, 5, 270, 70);
 		setIcon(logo, "header.png", logo.getWidth(), logo.getHeight());
 
 		// Pack Selector Background
@@ -193,6 +210,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 		progressBar.setFont(minecraft);
+
+		// News Items
+		news = new NewsComponent();
+		news.setBounds(barBox.getX(), logo.getY() + logo.getHeight(), barBox.getWidth(), 100);
 
 		// Link background box
 		RoundedBox linkArea = new RoundedBox(TRANSPARENT);
@@ -351,6 +372,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(donate);
 		contentPane.add(linkArea);
 		contentPane.add(logo);
+//		contentPane.add(news);
 		contentPane.add(loginArea);
 		contentPane.add(options);
 		contentPane.add(exit);
@@ -371,7 +393,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public ModpackSelector getSelector() {
 		return packSelector;
 	}
-	
+
+	public NewsComponent getNews() {
+		return news;
+	}
+
 	public BackgroundImage getBackgroundImage() {
 		return packBackground;
 	}
@@ -449,7 +475,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				launcherOptions.setVisible(true);
 			}
 		} else if(action.equals(PACK_REMOVE_ACTION)) {
-			int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this pack?", "Remove Pack", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this pack?\n This will delete all files in: " + getSelector().getSelectedPack().getPackDirectory(), "Remove Pack", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (result == JOptionPane.YES_OPTION) {
 				getSelector().removePack();
 			}
@@ -533,6 +559,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	@Override
 	public void enableForm() {
+		progressBar.setVisible(false);
+		lockLoginButton(true);
 	}
 
 	@Override

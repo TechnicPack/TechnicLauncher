@@ -52,6 +52,11 @@ public class CustomModpack extends Modpack {
 	}
 
 	@Override
+	public String getMinecraftMd5() {
+		return info.getMinecraftMd5();
+	}
+
+	@Override
 	public String getBuild() {
 		return build;
 	}

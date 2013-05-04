@@ -24,47 +24,56 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic.rest.pack;
+package org.spoutcraft.launcher.technic.rest;
 
-import java.util.List;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.technic.rest.Mod;
-import org.spoutcraft.launcher.technic.rest.Modpack;
+public class Article extends RestObject {
 
-public class OfflineModpack extends Modpack {
-	private final String name;
-	private final String build;
+	@JsonProperty("title")
+	private String title;
+	@JsonProperty("image")
+	private String image;
+	@JsonProperty("display_title")
+	private String displayTitle;
+	@JsonProperty("category")
+	private String category;
+	@JsonProperty("user")
+	private String user;
+	@JsonProperty("summary")
+	private String summary;
+	@JsonProperty("created_at")
+	private String date;
 
-	public OfflineModpack(String name, String build) {
-		this.name = name;
-		this.build = build;
+	public String getCategory() {
+		return category;
 	}
 
-	@Override
-	public String getMinecraftVersion() {
-		return Settings.getInstalledMC(name);
+	public String getDate() {
+		return date;
 	}
 
-	@Override
-	public String getMinecraftMd5() {
-		return null;
+	public String getDisplayTitle() {
+		return displayTitle;
 	}
 
-	@Override
-	public String getBuild() {
-		return build;
+	public String getSummary() {
+		return summary;
 	}
 
-	@Override
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
-	@Override
-	public List<Mod> getMods() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getUrl() {
+		return RestAPI.getPlatformURL() + "article/view/" + title;
 	}
 
+	public String getImageUrl() {
+		return RestAPI.getPlatformURL() + "something" + image;
+	}
+
+	public String getUser() {
+		return user;
+	}
 }

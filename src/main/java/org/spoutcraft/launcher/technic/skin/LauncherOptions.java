@@ -62,6 +62,7 @@ import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.Utils;
 
 public class LauncherOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
@@ -91,6 +92,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private String installedDirectory;
 	private LiteTextBox packLocation;
 	private boolean directoryChanged = false;
+	private boolean streamChanged = false;
 	private String buildStream = "stable";
 
 	public LauncherOptions() {
@@ -220,7 +222,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		save.setActionCommand(SAVE_ACTION);
 		save.addActionListener(this);
 
-		LiteButton console = new LiteButton("Console");
+		LiteButton console = new LiteButton(Settings.getLauncherShowConsole() ? "Hide Console" : "Show Console");
 		console.setFont(minecraft.deriveFont(14F));
 		console.setBounds(10, logs.getY() + logs.getHeight() + 10, FRAME_WIDTH / 2 - 15, 25);
 		console.setForeground(Color.WHITE);
@@ -272,8 +274,12 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 				Settings.setMigrateDir(installedDirectory);
 			}
 			Settings.getYAML().save();
-			
-			if (mem != oldMem || oldperm != perm || directoryChanged) {
+
+			if (directoryChanged || streamChanged) {
+				JOptionPane.showMessageDialog(c, "A manual restart is required for changes to take effect. Please exit and restart your launcher.", "Restart Required", JOptionPane.INFORMATION_MESSAGE);
+				dispose();
+			}
+			if (mem != oldMem || oldperm != perm) {
 				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (result == JOptionPane.YES_OPTION) {
 					SpoutcraftLauncher.relaunch(true);
@@ -284,13 +290,26 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 			Compatibility.open(logDirectory);
 		} else if (action.equals(CONSOLE_ACTION)) {
-			SpoutcraftLauncher.setupConsole();
-			dispose();
+			if (Settings.getLauncherShowConsole())
+			{
+				Settings.setLauncherShowConsole(false);
+				SpoutcraftLauncher.destroyConsole();
+				dispose();
+			} else
+			{
+				Settings.setLauncherShowConsole(true);
+				SpoutcraftLauncher.setupConsole();
+				dispose();
+			}
 		} else if (action.equals(CHANGEFOLDER_ACTION)) {
 			int result = fileChooser.showOpenDialog(this);
 			
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
+				if (!FileUtils.checkLaunchDirectory(file)) {
+					JOptionPane.showMessageDialog(c, "Please select an empty directory, or your default install folder with settings.yml in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 				packLocation.setText(file.getPath());
 				installedDirectory = file.getAbsolutePath();
 				directoryChanged = true;
@@ -298,9 +317,11 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		} else if (action.equals(BETA_ACTION)) {
 			buildStream = "beta";
 			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
+			streamChanged = true;
 		} else if (action.equals(STABLE_ACTION)) {
 			buildStream = "stable";
 			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
+			streamChanged = true;
 		}
 		
 	}

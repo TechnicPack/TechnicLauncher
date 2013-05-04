@@ -32,6 +32,8 @@ public abstract class Modpack extends RestObject {
 	
 	public abstract String getMinecraftVersion();
 
+	public abstract String getMinecraftMd5();
+
 	public abstract String getBuild();
 
 	public abstract String getName();

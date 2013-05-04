@@ -61,6 +61,11 @@ public final class GameUpdater extends Directories {
 		updateThread.start();
 	}
 
+	public void resetUpdateThread() {
+		Launcher.getGameLauncher().setShouldRun(false);
+		updateThread = null;
+	}
+
 	public boolean isFinished() {
 		return updateThread.isFinished();
 	}

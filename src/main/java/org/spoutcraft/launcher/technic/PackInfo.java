@@ -32,10 +32,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.technic.rest.RestObject;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
@@ -44,7 +46,6 @@ import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.ResourceUtils;
 import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.util.FileUtils;
 
 public abstract class PackInfo extends RestObject {
 	private Image logo;
@@ -75,6 +76,10 @@ public abstract class PackInfo extends RestObject {
 
 	public boolean isLoading() {
 		return true;
+	}
+
+	public boolean isForceDir() {
+		return false;
 	}
 
 	public String getLogoURL() {
@@ -153,7 +158,13 @@ public abstract class PackInfo extends RestObject {
 	
 	public void setPackDirectory(File packPath) {
 		if (installedDirectory != null) {
-			FileUtils.moveDirectory(installedDirectory, packPath);
+			try {
+				org.apache.commons.io.FileUtils.copyDirectory(installedDirectory, packPath);
+				org.apache.commons.io.FileUtils.cleanDirectory(installedDirectory);
+			} catch (IOException e) {
+				Launcher.getLogger().log(Level.SEVERE, "Unable to move modpack directory at " + installedDirectory.getAbsolutePath() + " to " + packPath.getAbsolutePath(), e);
+				return;
+			}
 		}
 		Settings.setPackDirectory(getName(), packPath);
 		installedDirectory = packPath;

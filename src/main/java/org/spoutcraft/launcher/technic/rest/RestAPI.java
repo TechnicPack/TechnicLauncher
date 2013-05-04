@@ -32,14 +32,18 @@ import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
@@ -51,15 +55,19 @@ import org.spoutcraft.launcher.util.MirrorUtils;
 
 public class RestAPI {
 	private static RestAPI TECHNIC;
+	private static Map<String, Minecraft> mcVersions;
+	private static FullModpacks DEFAULT;
 
-	private final static ObjectMapper mapper = new ObjectMapper();
+	private static final String PLATFORM = "http://www.technicpack.net/";
+	private static final String PATCH_VERSION = "1.4.7";
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private final String restURL;
 	private final String restInfoURL;
 	private final String modURL;
 
 	private String mirrorURL;
-	private Modpacks modpacks;
+	private static Modpacks modpacks;
 
 	public RestAPI(String url) {
 		restURL = url;
@@ -69,31 +77,57 @@ public class RestAPI {
 			modpacks = setupModpacks();
 			modpacks.setRest(this);
 			mirrorURL = modpacks.getMirrorURL();
+
 		} catch (RestfulAPIException e) {
-			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + url + " Running Offline instead.", e);
+			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + url + " Running Offline instead.");
 			mirrorURL = "";
+		}
+
+		if (mcVersions == null) {
+			try {
+				mcVersions = getMinecraftVersions();
+			} catch (RestfulAPIException e) {
+				Launcher.getLogger().log(Level.SEVERE, "Unable to load minecraft versions from " + getMinecraftVersionURL(), e);
+				mcVersions = Collections.emptyMap();
+			}
 		}
 	}
 
-	public static Set<String> getDefaults() {
-		Modpacks packs = getDefault().getModpacks();
-		if (packs != null) {
-			return packs.getMap().keySet();
+	public static void setupDefault() {
+		if (DEFAULT != null) {
+			return;
+		}
+		try {
+			DEFAULT = getRestObject(FullModpacks.class, getDefault().getRestInfoURL() + "?include=full");
+		} catch (RestfulAPIException e) {
+			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + TECHNIC.getRestInfoURL() + "?include=full" + " Running Offline instead.", e);
+		}
+	}
+
+	public static Collection<RestInfo> getDefaults() {
+		getDefault();
+		if (DEFAULT != null) {
+			return DEFAULT.getModpacks();
 		} else {
-			return Collections.emptySet();
+			return Collections.emptyList();
 		}
 	}
 
 	public static RestAPI getDefault() {
 		if (TECHNIC == null) {
 			TECHNIC = new RestAPI("http://solder.technicpack.net/api/");
+			setupDefault();
 		}
 
 		return TECHNIC;
 	}
 
+	public static String getPlatformAPI() {
+		return PLATFORM + "api/";
+	}
+
 	public static String getPlatformURL() {
-		return "http://www.technicpack.net/api/";
+		return PLATFORM;
 	}
 
 	public String getRestURL() {
@@ -137,7 +171,11 @@ public class RestAPI {
 	}
 
 	public static String getCustomPackURL(String modpack) {
-		return getPlatformURL() + "modpack/" + modpack;
+		return getPlatformAPI() + "modpack/" + modpack;
+	}
+
+	public static String getMinecraftVersionURL() {
+		return getPlatformAPI() + "minecraft";
 	}
 
 	public static String getDownloadCountURL(String modpack) {
@@ -168,7 +206,7 @@ public class RestAPI {
 		return mirrorURL;
 	}
 
-	public List<RestInfo> getRestInfos() throws RestfulAPIException {
+	public Collection<RestInfo> getRestInfos() throws RestfulAPIException {
 		return modpacks.getModpacks();
 	}
 
@@ -184,13 +222,16 @@ public class RestAPI {
 	}
 
 	public RestInfo getModpackInfo(String modpack) throws RestfulAPIException {
-		RestInfo result = getRestObject(RestInfo.class, getModpackInfoURL(modpack));
+		RestInfo result;
+		if (this.equals(getDefault())) {
+			result = DEFAULT.getMap().get(modpack);
+		} else {
+			result = getRestObject(RestInfo.class, getModpackInfoURL(modpack));
+		}
+		
 		result.setRest(this);
 		result.init();
-		String display = modpacks.getDisplayName(modpack);
-		if (display != null) {
-			result.setDisplayName(display);
-		}
+
 		return result;
 	}
 
@@ -208,7 +249,7 @@ public class RestAPI {
 	}
 
 	public static int getLatestLauncherBuild(String stream) throws RestfulAPIException {
-		LauncherBuild result = getRestObject(LauncherBuild.class, getPlatformURL() + "launcher/version/" + stream);
+		LauncherBuild result = getRestObject(LauncherBuild.class, getPlatformAPI() + "launcher/version/" + stream);
 		return result.getLatestBuild();
 	}
 	
@@ -220,7 +261,7 @@ public class RestAPI {
 			ext = "exe";
 		}
 		
-		String url = getPlatformURL() + "launcher/url/" + version + "/" + ext;
+		String url = getPlatformAPI() + "launcher/url/" + version + "/" + ext;
 		LauncherURL result = getRestObject(LauncherURL.class, url);
 		return result.getLauncherURL();
 	}
@@ -229,8 +270,9 @@ public class RestAPI {
 		InputStream stream = null;
 		try {
 			URLConnection conn = new URL(url).openConnection();
-			conn.setConnectTimeout(2000);
-			conn.setReadTimeout(5000);
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+			conn.setConnectTimeout(15000);
+			conn.setReadTimeout(15000);
 
 			stream = conn.getInputStream();
 			T result = mapper.readValue(stream, restObject);
@@ -247,24 +289,112 @@ public class RestAPI {
 			IOUtils.closeQuietly(stream);
 		}
 	}
- 
-	public static String getMinecraftURL(String user) {
-		return "http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?user=" + user + "&ticket=1";
+
+	public static List<Article> getNews() throws RestfulAPIException {
+		InputStream stream = null;
+		try {
+			URLConnection conn = new URL(getPlatformAPI() + "news/").openConnection();
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+			conn.setConnectTimeout(15000);
+			conn.setReadTimeout(15000);
+
+			stream = conn.getInputStream();
+			List<Article> versions = mapper.readValue(stream, new TypeReference<List<Article>>() {});
+
+			for (Article result : versions) {
+				if (result.hasError()) {
+					throw new RestfulAPIException("Error in json response: " + result.getError());
+				}
+			}
+
+			return versions;
+		} catch (SocketTimeoutException e) {
+			throw new RestfulAPIException("Timed out accessing URL [" + getMinecraftVersionURL() + "]", e);
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + getMinecraftVersionURL() + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
 	}
 
-	public static String getPatchURL(Modpack build) {
+	public static HashMap<String, Minecraft> getMinecraftVersions() throws RestfulAPIException {
+		InputStream stream = null;
+		try {
+			URLConnection conn = new URL(getMinecraftVersionURL()).openConnection();
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+			conn.setConnectTimeout(15000);
+			conn.setReadTimeout(15000);
+
+			stream = conn.getInputStream();
+			HashMap<String, Minecraft> versions = mapper.readValue(stream, new TypeReference<Map<String, Minecraft>>() {});
+
+			for (Minecraft result : versions.values()) {
+				if (result.hasError()) {
+					throw new RestfulAPIException("Error in json response: " + result.getError());
+				}
+			}
+
+			return versions;
+		} catch (SocketTimeoutException e) {
+			throw new RestfulAPIException("Timed out accessing URL [" + getMinecraftVersionURL() + "]", e);
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + getMinecraftVersionURL() + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
+	}
+
+	public static String getMinecraftURL(String version) {
+		Minecraft minecraft = mcVersions.get(version);
+		System.out.println(minecraft);
+		if (minecraft == null || minecraft.shouldUsePatch()) {
+			version = PATCH_VERSION;
+		}
+
+		if (Arrays.asList(Versions.OLD_ASSETS).contains(version)) {
+			version = version.replace('.', '_');
+			return "http://assets.minecraft.net/" + version + "/minecraft.jar";
+		}
+		return "https://s3.amazonaws.com/Minecraft.Download/versions/" + version +"/" + version + ".jar";
+	}
+
+	public static String getMinecraftMD5(String version) {
+		Minecraft minecraft = mcVersions.get(version);
+		if (shouldUsePatch(version)) {
+			version = PATCH_VERSION;
+		}
+		minecraft = mcVersions.get(version);
+
+		if (minecraft == null) {
+			return null;
+		}
+		return minecraft.getMd5();
+	}
+
+	public static boolean shouldUsePatch(String version) {
+		Minecraft minecraft = mcVersions.get(version);
+		boolean shouldPatch = false;
+		if (minecraft == null && (version.equals("1.2.3") || version.equals("1.2.5"))) {
+			shouldPatch = true;
+		} else if (minecraft != null) {
+			shouldPatch = minecraft.shouldUsePatch();
+		}
+		return shouldPatch;
+	}
+
+	public static String getPatchURL(String version) {
 		String mirrorURL = "Patches/Minecraft/minecraft_";
 		mirrorURL += Versions.getLatestMinecraftVersion();
-		mirrorURL += "-" + build.getMinecraftVersion() + ".patch";
+		mirrorURL += "-" + version + ".patch";
 		String fallbackURL = "http://get.spout.org/patch/minecraft_";
 		fallbackURL += Versions.getLatestMinecraftVersion();
-		fallbackURL += "-" + build.getMinecraftVersion() + ".patch";
+		fallbackURL += "-" + version + ".patch";
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
 	private static class TechnicMD5 extends RestObject {
 		@JsonProperty("md5")
-		String md5;
+		private String md5;
 
 		public String getMD5() {
 			return md5;
@@ -273,7 +403,7 @@ public class RestAPI {
 	
 	private static class LauncherBuild extends RestObject {
 		@JsonProperty("LatestBuild")
-		int latestBuild;
+		private int latestBuild;
 		
 		public int getLatestBuild() {
 			return latestBuild;
@@ -282,10 +412,37 @@ public class RestAPI {
 	
 	private static class LauncherURL extends RestObject {
 		@JsonProperty("URL")
-		String launcherURL;
+		private String launcherURL;
 		
 		public String getLauncherURL() {
 			return launcherURL;
+		}
+	}
+
+	private static class Minecraft extends RestObject {
+		@JsonProperty("version")
+		private String version;
+		@JsonProperty("md5")
+		private String md5;
+		@JsonProperty("use_patch")
+		private boolean usePatch;
+
+		@SuppressWarnings("unused")
+		public String getVersion() {
+			return version;
+		}
+
+		public String getMd5() {
+			return md5;
+		}
+
+		public boolean shouldUsePatch() {
+			return usePatch;
+		}
+
+		@Override
+		public String toString() {
+			return "Minecraft: " + version + " md5: " + md5 + " use_patch: " + usePatch;
 		}
 	}
 }

@@ -42,7 +42,7 @@ public class FileUtils {
 	 * @throws IOException in case deletion is unsuccessful
 	 */
 	public static void deleteDirectory(File directory) throws IOException {
-		if (!directory.exists()) {
+		if (directory == null || !directory.exists()) {
 			return;
 		}
 
@@ -212,5 +212,37 @@ public class FileUtils {
 			file.renameTo(new File(dest, file.getName()));
 		}
 		deleteQuietly(dir);
+	}
+
+	public static boolean checkLaunchDirectory(File dir) {
+		if (!dir.isDirectory()) {
+			return false;
+		}
+
+		if (dir.list().length == 0) {
+			return true;
+		}
+
+		for (File file: dir.listFiles()) {
+			if (file.getName().equals("settings.yml")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks if a directory is empty
+	 * 
+	 * @param dir to check
+	 * @return true if the directory is empty
+	 */
+	public static boolean checkEmpty(File dir) {
+		if (!dir.isDirectory()) {
+			return false;
+		}
+
+		return dir.list().length == 0;
 	}
 }

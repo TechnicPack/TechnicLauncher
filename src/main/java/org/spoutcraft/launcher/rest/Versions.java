@@ -41,9 +41,12 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
-//TODO: FIX DIS SHIT
+
 public final class Versions {
 	private static List<String> versions = null;
+
+	public static String[] OLD_ASSETS = { "1.2.3", "1.2.5", "1.4.6", "1.4.7", "1.5" };
+
 	public static synchronized List<String> getMinecraftVersions() {
 		if (versions == null) {
 			InputStream stream = null;

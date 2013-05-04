@@ -118,7 +118,7 @@ public class SpoutcraftLauncher {
 
 		relaunch(false);
 
-		if (params.isConsole()) {
+		if (params.isConsole() || Settings.getLauncherShowConsole()) {
 			setupConsole();
 			logger.info("Console Mode Activated");
 		}
@@ -135,6 +135,7 @@ public class SpoutcraftLauncher {
 		PackManager.initPacks(selector);
 
 		frame.setUser(Settings.getLastUser());
+//		frame.getNews().loadArticles();
 
 		if (params.isDebugMode()) {
 			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");

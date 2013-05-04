@@ -198,7 +198,12 @@ public final class StartupParameters {
 			}
 			commands.add("-Xmx" + memory + "m");
 			if (Settings.getPermGen()) {
-				commands.add("-XX:MaxPermSize=128m");
+				int permSize = 128;
+				if (memory >= 2048) {
+					permSize = 256;
+				}
+				log.info("Attempting relaunch with " + "-XX:MaxPermSize=" + permSize + "m" + " as permgen");
+				commands.add("-XX:MaxPermSize=" + permSize + "m");
 			}
 			commands.add("-cp");
 			commands.add(pathToJar);

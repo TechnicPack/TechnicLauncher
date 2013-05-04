@@ -40,6 +40,8 @@ import org.spoutcraft.launcher.technic.rest.pack.OfflineModpack;
 public class RestInfo extends PackInfo {
 	@JsonProperty("name")
 	private String name;
+	@JsonProperty("display_name")
+	private String displayName;
 	@JsonProperty("recommended")
 	private String recommended;
 	@JsonProperty("latest")
@@ -55,12 +57,6 @@ public class RestInfo extends PackInfo {
 	@JsonProperty("url")
 	private String url;
 
-	private String displayName = "Technic";
-
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-
 	public String getWebURL() {
 		return url;
 	}
@@ -72,8 +68,12 @@ public class RestInfo extends PackInfo {
 
 	@Override
 	public String getDisplayName() {
+		if (displayName == null) {
+			displayName = name;
+		}
 		return displayName;
 	}
+
 	@Override
 	public String getRecommended() {
 		return recommended;

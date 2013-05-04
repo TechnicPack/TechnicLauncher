@@ -47,11 +47,13 @@ import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.progress.ProgressMonitor;
 
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.technic.OfflineInfo;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
@@ -106,6 +108,11 @@ public class UpdateThread extends Thread {
 			try {
 				runTasks();
 				break;
+			} catch (DownloadException e) {
+				JOptionPane.showMessageDialog(Launcher.getFrame(), "Error downloading file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
+				Launcher.getFrame().enableForm();
+				Launcher.getGameUpdater().resetUpdateThread();
+				return;
 			} catch (Exception e) {
 				Launcher.getFrame().handleException(e);
 				return;
@@ -115,7 +122,7 @@ public class UpdateThread extends Thread {
 
 	private void runTasks() throws IOException {
 		while (!valid.get()) {
-			if (!pack.isLoading() && build.getMinecraftVersion() != null) {
+			if (!pack.isLoading() && build.getMinecraftVersion() != null && !(pack instanceof OfflineInfo)) {
 				boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
 
 				if (minecraftUpdate) {
@@ -301,18 +308,16 @@ public class UpdateThread extends Thread {
 	}
 
 	public void updateMinecraft(Modpack build) throws IOException {
-		pack.getBinDir().mkdir();
-		pack.getCacheDir().mkdir();
-		pack.getTempDir().mkdir();
+		pack.init();
 
-		String minecraftMD5 = FileType.MINECRAFT.getMD5();
+		String minecraftMD5 = build.getMinecraftMd5();
 		String jinputMD5 = FileType.JINPUT.getMD5();
 		String lwjglMD5 = FileType.LWJGL.getMD5();
 		String lwjgl_utilMD5 = FileType.LWJGL_UTIL.getMD5();
 
 		// Processs minecraft.jar
 		logger.info("Mod pack Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
-		File mcCache = new File(pack.getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		File mcCache = new File(Utils.getCacheDirectory(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			String output = pack.getTempDir() + File.separator + "minecraft.jar";
 			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, pack, build, listener);
@@ -323,21 +328,21 @@ public class UpdateThread extends Thread {
 		nativesDir.mkdir();
 
 		// Process other downloads
-		mcCache = new File(pack.getCacheDir(), "jinput.jar");
+		mcCache = new File(Utils.getCacheDirectory(), "jinput.jar");
 		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", pack.getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar");
 		} else {
 			Utils.copy(mcCache, new File(pack.getBinDir(), "jinput.jar"));
 		}
 
-		mcCache = new File(pack.getCacheDir(), "lwjgl.jar");
+		mcCache = new File(Utils.getCacheDirectory(), "lwjgl.jar");
 		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", pack.getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
 		} else {
 			Utils.copy(mcCache, new File(pack.getBinDir(), "lwjgl.jar"));
 		}
 
-		mcCache = new File(pack.getCacheDir(), "lwjgl_util.jar");
+		mcCache = new File(Utils.getCacheDirectory(), "lwjgl_util.jar");
 		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", pack.getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
 		} else {

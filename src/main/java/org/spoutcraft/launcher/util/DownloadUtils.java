@@ -30,6 +30,7 @@ package org.spoutcraft.launcher.util;
 import java.io.File;
 import java.io.IOException;
 
+import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.util.Download.Result;
 
 public class DownloadUtils {
@@ -67,7 +68,7 @@ public class DownloadUtils {
 			}
 		}
 		if (outputFile == null) {
-			throw new WrappedIOException("Failed to download " + url, download != null ? download.getException() : null);
+			throw new DownloadException("Failed to download " + url, download != null ? download.getException() : null);
 		}
 		if (cacheName != null) {
 			File cacheFolder = Utils.getCacheDirectory();
@@ -84,25 +85,5 @@ public class DownloadUtils {
 
 	public static Download downloadFile(String url, String output) throws IOException {
 		return downloadFile(url, output, null);
-	}
-	
-	private static class WrappedIOException extends IOException {
-		private static final long serialVersionUID = 1L;
-		Exception e;
-		String message;
-		public WrappedIOException(String message, Exception e) {
-			this.message = message;
-			this.e = e;
-		}
-
-		@Override
-		public Exception getCause() {
-			return e;
-		}
-
-		@Override
-		public String getMessage() {
-			return message;
-		}
 	}
 }

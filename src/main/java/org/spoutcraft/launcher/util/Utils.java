@@ -99,28 +99,44 @@ public class Utils {
 			}
 
 			if (!exists) {
-				int result = JOptionPane.showConfirmDialog(splash, "No installation of technic found. Technic Launcher will install at: " + workDir.getAbsolutePath() + " Would you like to change the install directory?", "Install Technic Launcher", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-				if (result == JOptionPane.YES_OPTION) {
-					JFileChooser fileChooser = new JFileChooser(workDir);
-					fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-					int changeInst = fileChooser.showOpenDialog(splash);
-
-					if (changeInst == JFileChooser.APPROVE_OPTION) {
-						workDir = fileChooser.getSelectedFile();
-					}
-					workDir.mkdirs();
-				}
+				workDir = selectInstallDir(workDir);
 			} else if (Settings.getMigrate() && Settings.getMigrateDir() != null) {
 				File migrate = new File(Settings.getMigrateDir());
-				FileUtils.moveDirectory(workDir, migrate);
-				workDir = migrate;
-				Settings.removeMigrate();
-				File settings = new File(migrate, "settings.yml");
-				settings.delete();
+				try {
+					org.apache.commons.io.FileUtils.copyDirectory(workDir, migrate);
+					org.apache.commons.io.FileUtils.cleanDirectory(workDir);
+					workDir = migrate;
+					
+					File settings = new File(migrate, "settings.yml");
+					settings.delete();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					Settings.removeMigrate();
+				}
 			}
 
 			Settings.setLauncherDir(workDir.getAbsolutePath());
 			Settings.getYAML().save();
+		}
+		return workDir;
+	}
+
+	public static File selectInstallDir(File workDir) {
+		int result = JOptionPane.showConfirmDialog(splash, "No installation of technic found. \n\nTechnic Launcher will install at: \n" + workDir.getAbsolutePath() + " \n\nWould you like to change the install directory?", "Install Technic Launcher", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+		if (result == JOptionPane.YES_OPTION) {
+			JFileChooser fileChooser = new JFileChooser(workDir);
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int changeInst = fileChooser.showOpenDialog(splash);
+
+			if (changeInst == JFileChooser.APPROVE_OPTION) {
+				workDir = fileChooser.getSelectedFile();
+				if (!FileUtils.checkLaunchDirectory(workDir)) {
+					JOptionPane.showMessageDialog(splash, "Please select an empty directory, or your default install folder with settings.yml in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
+					return selectInstallDir(workDir);
+				}
+			}
+			workDir.mkdirs();
 		}
 		return workDir;
 	}
@@ -130,7 +146,11 @@ public class Utils {
 	}
 
 	public static File getCacheDirectory() {
-		return new File(getLauncherDirectory(), "cache");
+		File cache = new File(getLauncherDirectory(), "cache");
+		if (!cache.exists()) {
+			cache.mkdir();
+		}
+		return cache;
 	}
 	
 	public static File getAssetsDirectory() {

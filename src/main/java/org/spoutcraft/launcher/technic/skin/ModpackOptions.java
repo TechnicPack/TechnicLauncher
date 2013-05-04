@@ -57,6 +57,7 @@ import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.Utils;
 
 public class ModpackOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
@@ -266,6 +267,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		} else if (action.equals(SAVE_ACTION)) {
 			Settings.setModpackBuild(installedPack.getName(), build);
 			if (directoryChanged) {
+				directoryChanged = false;
 				installedPack.setPackDirectory(installedDirectory);
 			}
 			Settings.getYAML().save();
@@ -292,6 +294,10 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
+				if (!FileUtils.checkEmpty(file)) {
+					JOptionPane.showMessageDialog(c, "Please select an empty directory.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 				packLocation.setText(file.getPath());
 				installedDirectory = file;
 				directoryChanged = true;
