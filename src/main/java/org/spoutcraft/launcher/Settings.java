@@ -66,6 +66,14 @@ public class Settings {
 		yaml.setProperty("launcher.launcher.buildNumber", build);
 	}
 
+	public static synchronized boolean getLauncherShowConsole() {
+		return yaml.getBoolean("launcher.launcher.showConsole",false);
+	}
+
+	public static synchronized void setLauncherShowConsole(boolean value) {
+		yaml.setProperty("launcher.launcher.showConsole", value);
+	}
+
 	public static synchronized Channel getLauncherChannel() {
 		return Channel.getType(yaml.getInt("launcher.launcher.type", 0));
 	}

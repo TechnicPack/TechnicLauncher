@@ -118,7 +118,7 @@ public class SpoutcraftLauncher {
 
 		relaunch(false);
 
-		if (params.isConsole()) {
+		if (params.isConsole() || Settings.getLauncherShowConsole()) {
 			setupConsole();
 			logger.info("Console Mode Activated");
 		}

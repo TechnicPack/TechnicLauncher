@@ -222,7 +222,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		save.setActionCommand(SAVE_ACTION);
 		save.addActionListener(this);
 
-		LiteButton console = new LiteButton("Console");
+		LiteButton console = new LiteButton(Settings.getLauncherShowConsole() ? "Hide Console" : "Show Console");
 		console.setFont(minecraft.deriveFont(14F));
 		console.setBounds(10, logs.getY() + logs.getHeight() + 10, FRAME_WIDTH / 2 - 15, 25);
 		console.setForeground(Color.WHITE);
@@ -290,8 +290,17 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 			Compatibility.open(logDirectory);
 		} else if (action.equals(CONSOLE_ACTION)) {
-			SpoutcraftLauncher.setupConsole();
-			dispose();
+			if (Settings.getLauncherShowConsole())
+			{
+				Settings.setLauncherShowConsole(false);
+				SpoutcraftLauncher.destroyConsole();
+				dispose();
+			} else
+			{
+				Settings.setLauncherShowConsole(true);
+				SpoutcraftLauncher.setupConsole();
+				dispose();
+			}
 		} else if (action.equals(CHANGEFOLDER_ACTION)) {
 			int result = fileChooser.showOpenDialog(this);
 			
