@@ -290,4 +290,12 @@ public class Settings {
 		}
 		return "stable";
 	}
+
+	public static boolean getShowLauncherConsole() {
+		return yaml.getBoolean("launcher.showConsole", false);
+	}
+
+	public static void setShowLauncherConsole(boolean value) {
+		yaml.setProperty("launcher.showConsole",value);
+	}
 }
