@@ -438,9 +438,10 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public void updateFaces() {
 		for (String user : userButtons.keySet()) {
-			BufferedImage image = getUserImage(user);
-			if (image != null) {
-				userButtons.get(user).updateIcon(image);
+                    String userDisplayName = Launcher.getUsers().getUser(user).getDisplayName();
+                    BufferedImage image = getUserImage(userDisplayName);
+                    if (image != null) {
+			userButtons.get(user).updateIcon(image);
 			}
 		}
 	}
