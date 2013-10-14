@@ -25,6 +25,7 @@ import net.technicpack.launchercore.install.InstalledPacks;
 import net.technicpack.launchercore.install.PackRefreshListener;
 import net.technicpack.launchercore.install.User;
 import net.technicpack.launchercore.install.Users;
+import net.technicpack.launchercore.install.ResourceInstaller;
 import net.technicpack.launchercore.restful.PackInfo;
 import net.technicpack.launchercore.restful.RestObject;
 import net.technicpack.launchercore.restful.platform.PlatformPackInfo;
@@ -46,6 +47,7 @@ public class Launcher implements PackRefreshListener {
 	private Users users;
 	private InstalledPacks installedPacks;
 	private InstallThread installThread;
+	private ResourceInstaller assetInstaller;
 
 	public Launcher() {
 		if (Launcher.instance != null) {
@@ -67,11 +69,19 @@ public class Launcher implements PackRefreshListener {
 		}
 
 		this.launcherFrame = new LauncherFrame();
+		this.assetInstaller = new ResourceInstaller();
 
 		loadDefaultPacks();
 		loadInstalledPacks();
 		loadForcedPack();
 		installedPacks.add(new AddPack());
+                
+                Thread assets = new Thread("Assets Thread") {
+			@Override
+			public void run() {
+				instance.updateAssets();
+			}
+                };
 
 		Thread faces = new Thread("Faces Thread") {
 			@Override
@@ -89,6 +99,7 @@ public class Launcher implements PackRefreshListener {
 
 		faces.start();
 		news.start();
+                assets.start();
 
 		JOptionPane.showMessageDialog(launcherFrame, "Warning! This is an early beta of a complete back-end rewrite.\n" +
 				"Your mod installs may be corrupted or worse.\n" +
@@ -231,4 +242,9 @@ public class Launcher implements PackRefreshListener {
 	public void refreshPack(InstalledPack pack) {
 		launcherFrame.getSelector().redraw(true);
 	}
+
+        
+        private void updateAssets() {
+		assetInstaller.updateResources();
+        }
 }
