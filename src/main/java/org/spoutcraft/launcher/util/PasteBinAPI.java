@@ -82,7 +82,7 @@ public class PasteBinAPI {
 				wr.flush();
 				wr.close();
 
-				// Get Response
+				// Get response
 				InputStream is = connection.getInputStream();
 				BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 				String line;
