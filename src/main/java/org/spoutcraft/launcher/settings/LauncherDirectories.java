@@ -76,7 +76,6 @@ public class LauncherDirectories extends Directories {
 		try {
 			MigrateUtils.migrateSettings();
 		} catch (Exception e) {
-			//Ignore
 			e.printStackTrace();
 		}
 
