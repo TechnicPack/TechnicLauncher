@@ -61,7 +61,7 @@ public enum WindowMode {
 				bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 				return new Dimension((int)bounds.getWidth(), (int)bounds.getHeight());
 			default:
-				throw new IllegalArgumentException("Unknown windowmode");
+				throw new IllegalArgumentException("Unknown window mode");
 		}
 	}
 
@@ -81,7 +81,7 @@ public enum WindowMode {
 				bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 				return new Point(bounds.x, bounds.y);
 			default:
-				throw new IllegalArgumentException("Unknown windowmode");
+				throw new IllegalArgumentException("Unknown window mode");
 		}
 	}
 
