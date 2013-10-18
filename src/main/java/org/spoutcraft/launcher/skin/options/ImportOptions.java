@@ -248,9 +248,9 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 
 	public void urlUpdated(Document doc) {
 		try {
-			String givenUrl = doc.getText(0, doc.getLength()).trim();
+			final String url = doc.getText(0, doc.getLength()).trim();
 
-			if (givenUrl.isEmpty()) {
+			if (url.isEmpty()) {
 				msgLabel.setText("Enter your Technic Platform delivery URL below to add a new pack:");
 				enableComponent(save, false);
 				enableComponent(folder, false);
@@ -259,12 +259,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				this.url = "";
 				return;
 			}
-			String stable = "http://www.technicpack.net/api/modpack/";
-			if (givenUrl.startsWith(stable)) {
-				String slug = givenUrl.replace(stable, "");
-				givenUrl = PlatformConstants.MODPACK + slug;
-			}
-			final String url = givenUrl;
+
 			if (matchUrl(url)) {
 				msgLabel.setText("Attempting to fetch Modpack info...");
 				// Turn everything off while the data is being fetched

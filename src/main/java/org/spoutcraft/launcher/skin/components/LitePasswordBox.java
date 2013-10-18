@@ -42,6 +42,14 @@ public class LitePasswordBox extends JPasswordField implements FocusListener{
 	}
 
 	@Override
+	public void setText(String t) {
+		if (t != null && !t.isEmpty()) {
+			label.setVisible(false);
+		}
+		super.setText(t);
+	}
+
+	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
 		if (label != null) {

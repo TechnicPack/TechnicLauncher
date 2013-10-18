@@ -99,12 +99,6 @@ public class Launcher implements PackRefreshListener {
 		faces.start();
 		news.start();
 		assets.start();
-
-		JOptionPane.showMessageDialog(launcherFrame, "Warning! This is an early beta of a complete back-end rewrite.\n" +
-				"Your mod installs may be corrupted or worse.\n" +
-				"Use at your own risk.\n\n" +
-				"Known issue: Yogbox and Hack/Mine DO NOT WORK.",
-				"Warning! Beta Build of Launcher!", JOptionPane.WARNING_MESSAGE);
 	}
 
 	private void updateAssets() {
@@ -211,9 +205,16 @@ public class Launcher implements PackRefreshListener {
 				} catch (RestfulAPIException e) {
 					Utils.getLogger().log(Level.WARNING, "Unable to load technic modpacks", e);
 				}
+
+				removeDisabledPacks();
 			}
 		};
 		thread.start();
+	}
+
+	private void removeDisabledPacks() {
+		getInstalledPacks().remove("hackslashmine");
+		getInstalledPacks().remove("yogbox");
 	}
 
 	public static InstalledPacks getInstalledPacks() {

@@ -29,7 +29,6 @@ import net.technicpack.launchercore.util.DownloadUtils;
 import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
 import net.technicpack.launchercore.util.Utils;
-import org.spoutcraft.launcher.InstallThread;
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
@@ -55,6 +54,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -125,6 +125,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		this.addMouseWheelListener(this);
 		getContentPane().add(packBackground);
 		this.setUndecorated(true);
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
 	private void initComponents() {
@@ -139,15 +140,13 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		name.setBounds(loginArea.getX() + 15, loginArea.getY() + 15, 110, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
-		if (Launcher.getUsers().getLastUser() != null) {
-			name.setText(Launcher.getUsers().getLastUser());
-		}
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
 		pass.setBounds(loginArea.getX() + 15, loginArea.getY() + name.getHeight() + 20, 110, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
+
 
 		// Setup login button
 		login = new LiteButton("Launch");
@@ -170,6 +169,12 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		remember.setHorizontalTextPosition(SwingConstants.RIGHT);
 		remember.setIconTextGap(10);
 		remember.addKeyListener(this);
+
+		if (Launcher.getUsers().getLastUser() != null) {
+			name.setText(Launcher.getUsers().getLastUser());
+			pass.setText("PASSWORD");
+			remember.setSelected(true);
+		}
 
 		// Technic logo
 		JLabel logo = new JLabel();
@@ -438,7 +443,8 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public void updateFaces() {
 		for (String user : userButtons.keySet()) {
-			BufferedImage image = getUserImage(user);
+			String userDisplayName = Launcher.getUsers().getUser(user).getDisplayName();
+			BufferedImage image = getUserImage(userDisplayName);
 			if (image != null) {
 				userButtons.get(user).updateIcon(image);
 			}
@@ -501,7 +507,15 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 				return;
 			}
 			User user = Launcher.getUsers().getUser(this.name.getText());
-			if (user == null || !refresh(user)) {
+			if (user != null) {
+				boolean valid = AuthenticationService.validate(user);
+
+				if (!valid && !refresh(user)) {
+					JOptionPane.showMessageDialog(this, "Invalid token, please login again", "Invalid Token", JOptionPane.WARNING_MESSAGE);
+					Launcher.getUsers().removeUser(this.name.getText());
+					return;
+				}
+			} else {
 				if (this.pass.getPassword().length == 0) {
 					return;
 				}
@@ -509,8 +523,8 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 				if (user == null) {
 					return;
 				}
-
 			}
+
 			if (remember.isSelected()) {
 				Launcher.getUsers().addUser(user);
 				Launcher.getUsers().setLastUser(user.getUsername());
@@ -528,7 +542,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public boolean refresh(User user) {
 		RefreshResponse response = AuthenticationService.requestRefresh(user);
-		return response.getError() != null;
+		return response.getError() == null;
 	}
 
 	public User login(Users users, String username, String password) {
