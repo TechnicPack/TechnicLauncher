@@ -28,18 +28,21 @@ import net.technicpack.launchercore.util.Settings;
 
 import java.io.File;
 import java.io.IOException;
+import net.technicpack.launchercore.launch.MinecraftExitListener;
 
 public class InstallThread extends Thread {
 	private final User user;
 	private final InstalledPack pack;
 	private final ModpackInstaller modpackInstaller;
+	private final MinecraftExitListener exitListener;
 	private boolean finished = false;
 
-	public InstallThread(User user, InstalledPack pack, String build) {
+	public InstallThread(User user, InstalledPack pack, String build, MinecraftExitListener launcherHider) {
 		super("InstallThread");
 		this.user = user;
 		this.pack = pack;
 		this.modpackInstaller = new ModpackInstaller(Launcher.getFrame(), pack, build);
+		this.exitListener = launcherHider;
 	}
 
 	@Override
@@ -51,11 +54,12 @@ public class InstallThread extends Thread {
 
 			int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			MinecraftLauncher minecraftLauncher = new MinecraftLauncher(memory, pack, version);
-			minecraftLauncher.launch(user);
+			minecraftLauncher.launch(user).setExitListener(exitListener);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			Launcher.getFrame().getProgressBar().setVisible(false);
+			Launcher.getFrame().setVisible(false);
 			finished = true;
 		}
 	}
