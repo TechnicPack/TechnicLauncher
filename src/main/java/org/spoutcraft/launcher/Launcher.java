@@ -223,7 +223,7 @@ public class Launcher implements PackRefreshListener {
 	}
 
 	public static void launch(User user, InstalledPack pack, String build) {
-		instance.installThread = new InstallThread(user, pack, build);
+		instance.installThread = new InstallThread(user, pack, build, new LauncherHider(instance));
 		instance.installThread.start();
 	}
 
