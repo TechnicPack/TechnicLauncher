@@ -101,6 +101,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private LitePasswordBox pass;
 	private LiteButton login;
 	private JCheckBox remember;
+	private JCheckBox offlineMode;
 	private LiteProgressBar progressBar;
 	private LauncherOptions launcherOptions = null;
 	private ModpackOptions packOptions = null;
@@ -158,7 +159,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(loginArea.getX() + name.getWidth() + 30, loginArea.getY() + name.getHeight() + 20, 110, 24);
+		remember.setBounds(loginArea.getX() + name.getWidth() + 30, loginArea.getY() + name.getHeight() + 14, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setBorderPainted(false);
@@ -169,6 +170,20 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		remember.setHorizontalTextPosition(SwingConstants.RIGHT);
 		remember.setIconTextGap(10);
 		remember.addKeyListener(this);
+		
+		// Setup offline mode checkbox
+		offlineMode = new JCheckBox("Offline Mode");
+		offlineMode.setBounds(loginArea.getX() + name.getWidth() + 30, loginArea.getY() + name.getHeight() + 34, 120, 24);
+		offlineMode.setFont(minecraft);
+		offlineMode.setOpaque(false);
+		offlineMode.setBorderPainted(false);
+		offlineMode.setFocusPainted(false);
+		offlineMode.setContentAreaFilled(false);
+		offlineMode.setBorder(null);
+		offlineMode.setForeground(Color.WHITE);
+		offlineMode.setHorizontalTextPosition(SwingConstants.RIGHT);
+		offlineMode.setIconTextGap(10);
+		offlineMode.addKeyListener(this);
 
 		if (Launcher.getUsers().getLastUser() != null) {
 			name.setText(Launcher.getUsers().getLastUser());
@@ -373,6 +388,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		contentPane.add(name);
 		contentPane.add(pass);
 		contentPane.add(remember);
+		contentPane.add(offlineMode);
 		contentPane.add(login);
 		contentPane.add(steam);
 		contentPane.add(twitter);
@@ -506,6 +522,16 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			if (Launcher.isLaunching()) {
 				return;
 			}
+			
+			// If offline mode, just launch
+			if(offlineMode.isSelected())
+			{
+				//login(Launcher.getUsers(), this.name.getText(), "");
+				Launcher.launch(User.getOfflineUser(this.name.getText()),
+						packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
+				return;
+			}
+			
 			User user = Launcher.getUsers().getUser(this.name.getText());
 			if (user != null) {
 				boolean valid = AuthenticationService.validate(user);
