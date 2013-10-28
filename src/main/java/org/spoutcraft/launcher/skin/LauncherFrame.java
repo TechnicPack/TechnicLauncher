@@ -508,9 +508,15 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			}
 			User user = Launcher.getUsers().getUser(this.name.getText());
 			if (user != null) {
+				
 				boolean valid = AuthenticationService.validate(user);
 
 				if (!valid && !refresh(user)) {
+					if (!AuthenticationService.wasOnline()) {
+						offlineDialog(User.createOfflineUser(this.name.getText()));
+						return;
+					}
+					
 					JOptionPane.showMessageDialog(this, "Invalid token, please login again", "Invalid Token", JOptionPane.WARNING_MESSAGE);
 					Launcher.getUsers().removeUser(this.name.getText());
 					return;
@@ -520,7 +526,12 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 					return;
 				}
 				user = login(Launcher.getUsers(), this.name.getText(), new String(this.pass.getPassword()));
-				if (user == null) {
+				
+				if (!AuthenticationService.wasOnline()) {
+					offlineDialog(User.createOfflineUser(this.name.getText()));
+					return;
+				}
+				else if (user == null) {
 					return;
 				}
 			}
@@ -542,22 +553,48 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public boolean refresh(User user) {
 		RefreshResponse response = AuthenticationService.requestRefresh(user);
+		
+		if(response == null) {
+			return false;
+		}
+		
 		return response.getError() == null;
 	}
 
 	public User login(Users users, String username, String password) {
 		AuthResponse response = AuthenticationService.requestLogin(username, password, users.getClientToken());
-
+		
+		if(response == null) {
+			return null;
+		}
+		
 		if (response.getError() != null) {
 			JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
-
+		
 		return new User(username, response);
 	}
 
 	public ModpackSelector getSelector() {
 		return packSelector;
+	}
+	
+	public void offlineDialog(User user) {
+		int answer = JOptionPane.showOptionDialog(this,
+												  "Minecraft's auth server appears to be offline, start in offline mode?",
+												  "Offline Mode",
+												  JOptionPane.YES_NO_OPTION,
+												  JOptionPane.QUESTION_MESSAGE,
+												  null,
+												  new Object[] {"Yes", "Cancel"},
+												  "Yes");
+		if(answer == 0) {
+			Launcher.launch(user, packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
+		}
+		else {
+			return;
+		}
 	}
 
 	@Override
