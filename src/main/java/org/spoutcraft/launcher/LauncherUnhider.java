@@ -29,12 +29,14 @@ public class LauncherUnhider implements MinecraftExitListener {
 	@Override
 	public void onMinecraftExit(MinecraftProcess process) {
 		LaunchAction action = Settings.getLaunchAction();
-		if (action == null || action == LaunchAction.HIDE) {
+		if (action == null || action == LaunchAction.HIDE || action == LaunchAction.HIDE_WITH_CONSOLE) {
 			Launcher.getFrame().setVisible(true);
 
-			if (Settings.getShowConsole()) {
+			if (Settings.getShowConsole() && action == LaunchAction.HIDE_WITH_CONSOLE) {
 				SpoutcraftLauncher.showConsole();
 			}
+		} else if (action == LaunchAction.CLOSE_WITH_CONSOLE) {
+			System.exit(0);
 		}
 	}
 }
