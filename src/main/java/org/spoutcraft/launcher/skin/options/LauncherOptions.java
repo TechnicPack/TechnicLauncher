@@ -402,9 +402,9 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	}
 
 	private void populateOnLaunch(JComboBox onLaunch) {
-		onLaunch.addItem(LaunchAction.HIDE);
-		onLaunch.addItem(LaunchAction.CLOSE);
-		onLaunch.addItem(LaunchAction.NOTHING);
+		for (LaunchAction l : LaunchAction.values()) {
+			onLaunch.addItem(l);
+		}
 		LaunchAction selectedAction = Settings.getLaunchAction();
 		if (selectedAction == null) {
 			onLaunch.setSelectedItem(LaunchAction.HIDE);

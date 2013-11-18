@@ -83,14 +83,16 @@ public class InstallThread extends Thread {
 			Launcher.getFrame().getProgressBar().setVisible(false);
 			LaunchAction launchAction = Settings.getLaunchAction();
 
-			if (launchAction == null || launchAction == LaunchAction.HIDE) {
+			if (launchAction == null || launchAction == LaunchAction.HIDE || launchAction == LaunchAction.HIDE_WITH_CONSOLE) {
 					Launcher.getFrame().setVisible(false);
 
-					if (Settings.getShowConsole()) {
+					if (Settings.getShowConsole() && launchAction == LaunchAction.HIDE_WITH_CONSOLE) {
 						SpoutcraftLauncher.hideConsole();
 					}
-			} else if (launchAction == LaunchAction.CLOSE) {
+			} else if (launchAction == LaunchAction.CLOSE_WITH_CONSOLE) {
 				System.exit(0);
+			} else if (launchAction == LaunchAction.CLOSE && Settings.getShowConsole()) {
+				Launcher.getFrame().setVisible(false); // quits on pack exit
 			}
 
 			finished = true;
