@@ -80,6 +80,9 @@ public class Mover {
 				commands.add("java");
 			}
 			commands.add("-Xmx256m");
+			commands.add("-XX:+UseConcMarkSweepGC");
+			commands.add("-XX:+CMSPermGenSweepingEnabled");
+			commands.add("-XX:+CMSClassUnloadingEnabled");
 			commands.add("-cp");
 			commands.add(codeSource.getAbsolutePath());
 			commands.add(SpoutcraftLauncher.class.getName());

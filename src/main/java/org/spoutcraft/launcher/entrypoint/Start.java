@@ -120,6 +120,9 @@ public class Start {
 					commands.add("java");
 				}
 				commands.add("-Xmx256m");
+				commands.add("-XX:+UseConcMarkSweepGC");
+				commands.add("-XX:+CMSPermGenSweepingEnabled");
+				commands.add("-XX:+CMSClassUnloadingEnabled");
 				commands.add("-cp");
 				commands.add(temp.getAbsolutePath());
 				commands.add(Mover.class.getName());
